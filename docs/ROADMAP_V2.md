@@ -27,3 +27,24 @@ odd manualmente (como já funciona hoje).
   simuladas no formato real da API-Football).
 - Só falta a parte de buscar jogos futuros (`/fixtures`) e ligar o
   `fixture_id` encontrado a essa engine.
+
+## Reformulação completa de layout (estilo Forebet) — pós-lançamento
+
+Bruno enviou uma especificação completa e detalhada de reformulação de
+UX/UI (cabeçalho, navegação por data, filtro de competições, lista de
+jogos, EntradaPro Score, Value Bet destacado, Melhores Entradas do Dia,
+Ranking de Value, página individual da partida com abas, histórico de
+previsões com ROI/yield, competições, busca, favoritos, responsividade
+completa). Decisão: publicar a V1 atual primeiro, revisitar esse
+documento depois do lançamento.
+
+Boa parte dessa especificação depende da infraestrutura de "jogos
+futuros reais" já adiada para V2 (navegação por data, múltiplos
+campeonatos, lista de vários jogos simultâneos, Melhores Entradas do
+Dia, Ranking de Value, busca, favoritos, histórico de previsões).
+
+A parte que É viável sem essa infraestrutura (reaproveitando os dados/
+engines atuais): EntradaPro Score, página da partida com abas, selo de
+Value, explicação da previsão, forma dos times, desempenho casa/fora,
+cards mobile responsivos, indicação Free/Premium, rodapé com avisos
+legais.
