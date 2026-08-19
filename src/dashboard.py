@@ -218,6 +218,8 @@ def renderizar_configuracoes_laterais():
         )
 
         if autenticado:
+            renderizar_usuario_sidebar()
+
             st.page_link(
                 "pages/2_Assinatura_PRO.py",
                 label="⭐ EntradaPro PRO",
@@ -675,9 +677,7 @@ def main():
     expirar_assinaturas_vencidas()
     inicializar_estado_autenticacao()
 
-    if usuario_esta_autenticado():
-        renderizar_usuario_sidebar()
-    else:
+    if not usuario_esta_autenticado():
         renderizar_acoes_visitante_topo()
 
     renderizar_cabecalho()

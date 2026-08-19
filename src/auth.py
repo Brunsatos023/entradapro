@@ -1066,29 +1066,40 @@ def renderizar_usuario_sidebar():
         return
 
     with st.sidebar:
-        st.divider()
-        st.caption("CONTA")
-        st.markdown(f"**{usuario['nome']}**")
-        st.caption(f"@{usuario['usuario']}")
-        st.caption(usuario["email"])
-        st.caption(f"Plano: {usuario['plano']}")
+        with st.container(border=True):
+            st.markdown(f"**{usuario['nome']}**")
 
-        if st.button(
-            "Minha Conta",
-            use_container_width=True,
-            key="minha_conta"
-        ):
-            st.session_state.mostrar_minha_conta = (
-                not st.session_state.get("mostrar_minha_conta", False)
+            st.caption(
+                f"@{usuario['usuario']} · {usuario['email']}"
             )
-            st.rerun()
+
+            if str(usuario.get("plano", "")).strip().upper() == "PRO":
+                st.success("⭐ Plano PRO", icon="⭐")
+            else:
+                st.caption("Plano FREE")
+
+            coluna_conta, coluna_sair = st.columns(2)
+
+            with coluna_conta:
+                if st.button(
+                    "Conta",
+                    use_container_width=True,
+                    key="minha_conta"
+                ):
+                    st.session_state.mostrar_minha_conta = (
+                        not st.session_state.get(
+                            "mostrar_minha_conta", False
+                        )
+                    )
+                    st.rerun()
+
+            with coluna_sair:
+                if st.button(
+                    "Sair",
+                    use_container_width=True,
+                    key="logout"
+                ):
+                    fazer_logout()
 
         if st.session_state.get("mostrar_minha_conta", False):
             renderizar_minha_conta()
-
-        if st.button(
-            "Sair",
-            use_container_width=True,
-            key="logout"
-        ):
-            fazer_logout()
