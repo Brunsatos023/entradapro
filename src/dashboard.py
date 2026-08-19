@@ -721,6 +721,23 @@ def main():
         indice_alternativo=1
     )
 
+    # Primeira visita: em vez de esperar o usuário escolher e
+    # clicar em "Analisar partida", já mostramos de cara uma
+    # análise pronta com um confronto de destaque - reduz o
+    # primeiro passo necessário para ver o produto funcionando.
+    eh_primeira_visita = (
+        not st.session_state.partida_analisada
+        and st.session_state.mandante_ativo is None
+        and st.session_state.visitante_ativo is None
+        and usuario_esta_autenticado()
+    )
+
+    if eh_primeira_visita:
+        st.session_state.competicao_ativa = COMPETICAO_PADRAO
+        st.session_state.mandante_ativo = mandante_padrao
+        st.session_state.visitante_ativo = visitante_padrao
+        st.session_state.partida_analisada = True
+
     configuracao_lateral = (
         renderizar_configuracoes_laterais()
     )
@@ -811,6 +828,12 @@ def main():
         renderizar_estado_inicial()
         renderizar_rodape()
         return
+
+    if eh_primeira_visita:
+        st.caption(
+            "⭐ Mostrando um confronto em destaque para você "
+            "começar. Escolha outros times acima quando quiser."
+        )
 
     nome_mandante = (
         st.session_state.mandante_ativo
