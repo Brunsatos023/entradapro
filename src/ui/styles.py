@@ -6,30 +6,76 @@ def aplicar_estilos():
         """
         <style>
 
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+        /* ==========================================================
+           ENTRADAPRO — DESIGN SYSTEM V2
+           Paleta: gramado profundo + dourado (identidade de "Value"),
+           em vez do azul-marinho + verde-menta genérico da V1.
+           Tipografia: Oswald (títulos/placar, estilo transmissão
+           esportiva) + Manrope (texto corrido) + JetBrains Mono
+           (números/odds, sensação de dado analítico).
+           ========================================================== */
+
+        html, body, [class*="css"] {
+            font-family: 'Manrope', -apple-system, sans-serif;
+        }
+
+        h1, h2, h3,
+        .match-name,
+        .match-label {
+            font-family: 'Oswald', sans-serif !important;
+            letter-spacing: 0.01em;
+        }
+
+        /* Números/odds/percentuais ganham fonte monoespaçada -
+           reforça a leitura "dado analítico", diferencia do texto
+           corrido e evita ambiguidade entre 1/l/I em números longos. */
+        .metric-value,
+        .metric-value-green,
+        .premium-card-value,
+        .premium-card-value-green,
+        .premium-card-value-red,
+        .premium-team-score,
+        .value-item-number {
+            font-family: 'JetBrains Mono', monospace !important;
+            font-weight: 600 !important;
+            letter-spacing: -0.01em;
+        }
+
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <style>
+
         /* ==========================================================
            FOOTBALLAI — DESIGN SYSTEM V1
            ========================================================== */
 
         :root {
-            --bg-main: #07111f;
-            --bg-secondary: #0b1728;
-            --bg-card: #0f1e31;
-            --bg-card-soft: #12233a;
+            --bg-main: #091d14;
+            --bg-secondary: #0e251a;
+            --bg-card: #122e21;
+            --bg-card-soft: #163627;
 
             --border: rgba(126, 158, 191, 0.20);
             --border-strong: rgba(126, 158, 191, 0.34);
 
-            --text-primary: #f7fbff;
-            --text-secondary: #aebed0;
-            --text-muted: #7f91a8;
+            --text-primary: #fcfbfa;
+            --text-secondary: #bcc8b6;
+            --text-muted: #909f88;
 
-            --green: #53d99f;
-            --green-light: #72e8b6;
-            --green-dark: #1f9e72;
+            --green: #d9a353;
+            --green-light: #e8b972;
+            --green-dark: #9e6b1f;
 
             --red: #ef7583;
-            --yellow: #e7b94b;
-            --blue: #4e9ff5;
+            --yellow: #e7c84b;
+            --blue: #4eedf5;
 
             --radius-small: 10px;
             --radius-medium: 15px;
@@ -76,9 +122,9 @@ def aplicar_estilos():
                 ),
                 linear-gradient(
                     145deg,
-                    #06101d 0%,
-                    #091626 52%,
-                    #07111f 100%
+                    #081b12 0%,
+                    #0c2318 52%,
+                    #091d14 100%
                 );
 
             color: var(--text-primary);
@@ -102,8 +148,8 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     180deg,
-                    #071321 0%,
-                    #091827 100%
+                    #091f15 0%,
+                    #0c2419 100%
                 );
 
             border-right:
@@ -112,7 +158,7 @@ def aplicar_estilos():
 
 
         [data-testid="stSidebar"] * {
-            color: #eef5fc;
+            color: #f6f6f4;
         }
 
 
@@ -234,7 +280,7 @@ def aplicar_estilos():
 
         .stTabs [data-baseweb="tab"] p {
             color:
-                #9fb0c3 !important;
+                #aebba7 !important;
 
             font-size:
                 13px;
@@ -275,7 +321,7 @@ def aplicar_estilos():
 
         .stTabs [aria-selected="true"] p {
             color:
-                #74e7b7 !important;
+                #e7b974 !important;
         }
 
 
@@ -301,7 +347,7 @@ def aplicar_estilos():
         [data-testid="stSelectbox"] label,
         [data-testid="stNumberInput"] label {
             color:
-                #aebdd0 !important;
+                #bcc8b6 !important;
 
             font-size:
                 11px !important;
@@ -341,8 +387,8 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     135deg,
-                    #46d596,
-                    #2fba81
+                    #d59c46,
+                    #ba822f
                 );
 
             border:
@@ -370,8 +416,8 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     135deg,
-                    #63e5ac,
-                    #39c98e
+                    #e5b163,
+                    #c98f39
                 );
 
             border:
@@ -413,7 +459,7 @@ def aplicar_estilos():
 
         .match-label {
             color:
-                #8496aa;
+                #94a18d;
 
             font-size:
                 11px;
@@ -531,13 +577,13 @@ def aplicar_estilos():
 
         .stApp [data-testid="stMetricLabel"] {
             color:
-                #9dadbf !important;
+                #abb7a5 !important;
         }
 
 
         .stApp [data-testid="stMetricLabel"] p {
             color:
-                #9dadbf !important;
+                #abb7a5 !important;
 
             font-size:
                 11px !important;
@@ -549,13 +595,13 @@ def aplicar_estilos():
 
         .stApp [data-testid="stMetricValue"] {
             color:
-                #f8fbff !important;
+                #fcfcfb !important;
         }
 
 
         .stApp [data-testid="stMetricValue"] div {
             color:
-                #f8fbff !important;
+                #fcfcfb !important;
 
             font-weight:
                 850;
@@ -567,7 +613,7 @@ def aplicar_estilos():
 
         .stApp [data-testid="stMetricDelta"] {
             color:
-                #70dfb1 !important;
+                #dfb370 !important;
         }
 
 
@@ -599,7 +645,7 @@ def aplicar_estilos():
 
         .metric-label {
             color:
-                #91a2b7;
+                #a1ae9a;
 
             font-size:
                 12px;
@@ -785,7 +831,7 @@ def aplicar_estilos():
 
         .premium-card-label {
             color:
-                #91a5ba;
+                #a2b19a;
 
             font-size:
                 10px;
@@ -854,7 +900,7 @@ def aplicar_estilos():
 
         .premium-card-subtitle {
             color:
-                #aebdca;
+                #b9c4b4;
 
             font-size:
                 13px;
@@ -923,7 +969,7 @@ def aplicar_estilos():
                 rgba(83, 217, 159, 0.30);
 
             color:
-                #72e4b5;
+                #e4b672;
 
             font-size:
                 10px;
@@ -941,7 +987,7 @@ def aplicar_estilos():
                 rgba(142, 164, 189, 0.23);
 
             color:
-                #b8c7d7;
+                #c5d0bf;
         }
 
 
@@ -1002,7 +1048,7 @@ def aplicar_estilos():
                 space-between;
 
             color:
-                #b9c7d5;
+                #c4cfbf;
 
             font-size:
                 11px;
@@ -1043,8 +1089,8 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     90deg,
-                    #28b981,
-                    #67e7b4
+                    #b97f28,
+                    #e7b467
                 );
 
             box-shadow:
@@ -1063,8 +1109,8 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     90deg,
-                    #71859b,
-                    #aab8c8
+                    #82927a,
+                    #b6c1b1
                 );
         }
 
@@ -1102,7 +1148,7 @@ def aplicar_estilos():
         .premium-team-role,
         .premium-favorite-label {
             color:
-                #91a5ba;
+                #a2b19a;
 
             font-size:
                 10px;
@@ -1243,7 +1289,7 @@ def aplicar_estilos():
 
         .premium-team-score-label {
             color:
-                #9eafc1;
+                #acb9a6;
 
             font-size:
                 11px;
@@ -1261,7 +1307,7 @@ def aplicar_estilos():
 
         .premium-card-footer-label {
             color:
-                #91a5ba;
+                #a2b19a;
 
             font-size:
                 10px;
@@ -1295,7 +1341,7 @@ def aplicar_estilos():
 
         .premium-favorite-message {
             color:
-                #b7c7d4;
+                #c3cdbe;
 
             font-size:
                 12px;
@@ -1316,7 +1362,7 @@ def aplicar_estilos():
 
         .premium-favorite-status {
             color:
-                #6de5b3;
+                #e5b56d;
 
             font-size:
                 10px;
@@ -1434,7 +1480,7 @@ def aplicar_estilos():
 
         .value-item-label {
             color:
-                #aebdca;
+                #b9c4b4;
 
             font-size:
                 10px;
@@ -1493,7 +1539,7 @@ def aplicar_estilos():
 
         .stApp [data-testid="stAlert"] p {
             color:
-                #eef6ff !important;
+                #f8f7f5 !important;
 
             font-weight:
                 650;
@@ -1515,7 +1561,7 @@ def aplicar_estilos():
 
         .stApp [data-testid="stProgress"] p {
             color:
-                #b8c8d9 !important;
+                #c5d2bf !important;
         }
 
 
@@ -1528,28 +1574,28 @@ def aplicar_estilos():
         .stApp
         [data-testid="stMarkdownContainer"] li {
             color:
-                #dce6f2;
+                #e9e8e5;
         }
 
 
         .stApp
         [data-testid="stMarkdownContainer"] strong {
             color:
-                #f8fbff;
+                #fcfcfb;
         }
 
 
         .stApp
         [data-testid="stCaptionContainer"] {
             color:
-                #91a4b8 !important;
+                #a1af9a !important;
         }
 
 
         .stApp
         [data-testid="stCaptionContainer"] p {
             color:
-                #91a4b8 !important;
+                #a1af9a !important;
 
             font-size:
                 11px;
@@ -1595,7 +1641,7 @@ def aplicar_estilos():
 
         .footer-warning {
             color:
-                #74879d;
+                #85947d;
 
             text-align:
                 center;
@@ -1674,13 +1720,13 @@ def aplicar_estilos():
 
         ::-webkit-scrollbar-track {
             background:
-                #07111f;
+                #091d14;
         }
 
 
         ::-webkit-scrollbar-thumb {
             background:
-                #263b51;
+                #2a4d3d;
 
             border-radius:
                 999px;
