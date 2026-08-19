@@ -1,0 +1,33 @@
+# ==========================================================
+# EntradaPro — Dependências do projeto
+# ==========================================================
+# Instale com:
+#   pip install -r requirements.txt
+#
+# Versões mínimas testadas com Python 3.11+ (o projeto foi
+# desenvolvido com Python 3.13).
+# ==========================================================
+
+# --- Aplicação principal (dashboard) ---
+streamlit>=1.38
+
+# --- Dados e análise ---
+pandas>=2.2
+scikit-learn>=1.5
+joblib>=1.4
+
+# --- Gráficos ---
+matplotlib>=3.9
+
+# --- Requisições HTTP (API-Football, Mercado Pago) ---
+requests>=2.32
+
+# --- Variáveis de ambiente (.env) ---
+python-dotenv>=1.0
+
+# --- Imagens (logos dos times no cabeçalho) ---
+Pillow>=10.4
+
+# --- Servidor de webhook do Mercado Pago (processo separado do dashboard) ---
+fastapi>=0.115
+uvicorn>=0.30
