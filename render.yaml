@@ -1,0 +1,65 @@
+# ==========================================================
+# Configuração de deploy no Render (render.com)
+# ==========================================================
+# Este arquivo descreve os dois serviços que o EntradaPro precisa
+# para funcionar em produção: o dashboard (que os usuários acessam)
+# e o webhook (que recebe as confirmações de pagamento do Mercado
+# Pago). O Render lê este arquivo automaticamente ao conectar o
+# repositório como um "Blueprint".
+#
+# Nenhum valor secreto fica neste arquivo - toda credencial marcada
+# com "sync: false" é preenchida manualmente no painel do Render
+# (fica guardada lá com segurança, nunca aparece no código).
+# ==========================================================
+
+services:
+  # ---------------------------------------------------------
+  # Dashboard: o site que os usuários acessam
+  # ---------------------------------------------------------
+  - type: web
+    name: entradapro-dashboard
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "streamlit run src/dashboard.py --server.port $PORT --server.address 0.0.0.0 --server.headless true"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        sync: false
+      - key: API_FOOTBALL_KEY
+        sync: false
+      - key: MERCADO_PAGO_WEBHOOK_SECRET
+        sync: false
+      - key: MERCADO_PAGO_TEST_ACCESS_TOKEN
+        sync: false
+      - key: MERCADO_PAGO_TEST_PUBLIC_KEY
+        sync: false
+      - key: MERCADO_PAGO_AMBIENTE
+        sync: false
+      - key: MERCADO_PAGO_TEST_PLANO_MENSAL_ID
+        sync: false
+
+  # ---------------------------------------------------------
+  # Webhook: recebe as confirmações de pagamento do Mercado Pago.
+  # Precisa ficar sempre ligado (plano "starter", não "free"),
+  # ou o Mercado Pago pode tentar avisar sobre um pagamento
+  # enquanto o serviço está "dormindo".
+  # ---------------------------------------------------------
+  - type: web
+    name: entradapro-webhook
+    runtime: python
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn src.webhook_api:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        sync: false
+      - key: MERCADO_PAGO_WEBHOOK_SECRET
+        sync: false
+      - key: MERCADO_PAGO_TEST_ACCESS_TOKEN
+        sync: false
+      - key: MERCADO_PAGO_AMBIENTE
+        sync: false
