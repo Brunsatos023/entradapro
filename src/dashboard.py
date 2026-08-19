@@ -217,6 +217,13 @@ def renderizar_configuracoes_laterais():
             "e identificação de apostas de valor."
         )
 
+        if autenticado:
+            st.page_link(
+                "pages/2_Assinatura_PRO.py",
+                label="⭐ EntradaPro PRO",
+                use_container_width=True
+            )
+
         st.divider()
 
         st.markdown(

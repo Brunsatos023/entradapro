@@ -56,6 +56,12 @@ def renderizar_bloqueio_pro(
         mensagem
     )
 
+    st.page_link(
+        "pages/2_Assinatura_PRO.py",
+        label="⭐ Conhecer o EntradaPro PRO",
+        use_container_width=True
+    )
+
 
 def renderizar_selo_plano():
     plano = obter_plano_usuario()
