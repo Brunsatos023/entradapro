@@ -223,6 +223,11 @@ def renderizar_configuracoes_laterais():
             "### Odds de mercado"
         )
 
+        st.caption(
+            "Confira a odd atual no seu site de apostas "
+            "preferido e informe abaixo para calcular o Value."
+        )
+
         if autenticado:
             odd_over15 = st.number_input(
                 "Odd — Mais de 1,5 gols",
