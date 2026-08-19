@@ -31,3 +31,9 @@ Pillow>=10.4
 # --- Servidor de webhook do Mercado Pago (processo separado do dashboard) ---
 fastapi>=0.115
 uvicorn>=0.30
+
+# --- Banco de dados de produção (PostgreSQL) ---
+# Só é usado se a variável de ambiente DATABASE_URL estiver definida;
+# no seu computador (sem essa variável), o projeto continua usando
+# SQLite normalmente e este pacote fica parado sem uso.
+psycopg2-binary>=2.9

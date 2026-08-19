@@ -1,12 +1,4 @@
-import sqlite3
-from pathlib import Path
-
-
-CAMINHO_BANCO = (
-    Path(__file__).resolve().parents[1]
-    / "data"
-    / "entradapro_users.db"
-)
+from db import conectar_banco
 
 
 def alterar_plano(email, novo_plano):
@@ -26,9 +18,7 @@ def alterar_plano(email, novo_plano):
         email
     ).strip().lower()
 
-    with sqlite3.connect(
-        CAMINHO_BANCO
-    ) as conexao:
+    with conectar_banco() as conexao:
         cursor = conexao.execute(
             """
             UPDATE usuarios

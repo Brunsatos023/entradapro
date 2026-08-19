@@ -1,27 +1,10 @@
-import sqlite3
 from datetime import datetime
-from pathlib import Path
 
 from payment_plans import (
     obter_plano
 )
 
-
-CAMINHO_BANCO = (
-    Path(__file__).resolve().parents[1]
-    / "data"
-    / "entradapro_users.db"
-)
-
-
-def conectar_banco():
-    conexao = sqlite3.connect(
-        CAMINHO_BANCO
-    )
-
-    conexao.row_factory = sqlite3.Row
-
-    return conexao
+from db import conectar_banco
 
 
 def normalizar_status(

@@ -2,187 +2,16 @@ import hashlib
 import hmac
 import os
 import re
-import sqlite3
 import secrets
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import streamlit as st
 
-
-CAMINHO_BANCO = (
-    Path(__file__).resolve().parents[1]
-    / "data"
-    / "entradapro_users.db"
+from db import (
+    conectar_banco as _conectar_banco,
+    inicializar_banco,
+    ErroIntegridade,
 )
-
-
-def _conectar_banco():
-    CAMINHO_BANCO.parent.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    conexao = sqlite3.connect(
-        CAMINHO_BANCO
-    )
-
-    conexao.row_factory = sqlite3.Row
-
-    return conexao
-
-
-def inicializar_banco():
-    with _conectar_banco() as conexao:
-        conexao.execute(
-            """
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                senha_hash TEXT NOT NULL,
-                senha_salt TEXT NOT NULL,
-                plano TEXT NOT NULL DEFAULT 'FREE',
-                ativo INTEGER NOT NULL DEFAULT 1,
-                criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE TABLE IF NOT EXISTS recuperacao_senha (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                usuario_id INTEGER NOT NULL,
-                token_hash TEXT NOT NULL,
-                expira_em DATETIME NOT NULL,
-                usado INTEGER NOT NULL DEFAULT 0,
-                criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-            )
-            """
-        )
-
-        colunas_usuarios = conexao.execute(
-            "PRAGMA table_info(usuarios)"
-        ).fetchall()
-
-        nomes_colunas = {
-            coluna["name"]
-            for coluna in colunas_usuarios
-        }
-
-        if "usuario" not in nomes_colunas:
-            conexao.execute(
-                """
-                ALTER TABLE usuarios
-                ADD COLUMN usuario TEXT
-                """
-            )
-
-        conexao.execute(
-            """
-            CREATE UNIQUE INDEX IF NOT EXISTS
-            idx_usuarios_usuario
-            ON usuarios(usuario)
-            """
-        )
-
-        # Tabelas de assinatura/pagamento.
-        # Ficam aqui (e não só no script de migração) para que um banco
-        # novo (ex: produção) já nasça com tudo que o sistema de
-        # assinaturas precisa, sem depender de rodar um script à parte.
-        # CREATE TABLE/INDEX IF NOT EXISTS: seguro rodar mesmo em um
-        # banco que já tenha essas tabelas - não apaga nem altera nada.
-        conexao.execute(
-            """
-            CREATE TABLE IF NOT EXISTS assinaturas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                usuario_id INTEGER NOT NULL,
-                provedor TEXT NOT NULL DEFAULT 'MERCADO_PAGO',
-                assinatura_externa_id TEXT,
-                plano_codigo TEXT NOT NULL,
-                periodicidade TEXT NOT NULL,
-                valor REAL NOT NULL,
-                status TEXT NOT NULL DEFAULT 'PENDENTE',
-                inicio_em DATETIME,
-                proxima_cobranca_em DATETIME,
-                cancelado_em DATETIME,
-                criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
-            )
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE TABLE IF NOT EXISTS pagamentos (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                usuario_id INTEGER NOT NULL,
-                assinatura_id INTEGER,
-                provedor TEXT NOT NULL DEFAULT 'MERCADO_PAGO',
-                pagamento_externo_id TEXT,
-                valor REAL NOT NULL,
-                status TEXT NOT NULL,
-                forma_pagamento TEXT,
-                pago_em DATETIME,
-                criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-                FOREIGN KEY (assinatura_id) REFERENCES assinaturas(id)
-            )
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE UNIQUE INDEX IF NOT EXISTS
-            idx_assinaturas_externa
-            ON assinaturas(assinatura_externa_id)
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE UNIQUE INDEX IF NOT EXISTS
-            idx_pagamentos_externo
-            ON pagamentos(pagamento_externo_id)
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_assinaturas_usuario
-            ON assinaturas(usuario_id)
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_pagamentos_usuario
-            ON pagamentos(usuario_id)
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_assinaturas_status
-            ON assinaturas(status)
-            """
-        )
-
-        conexao.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_pagamentos_status
-            ON pagamentos(status)
-            """
-        )
-
-        conexao.commit()
 
 
 def _normalizar_email(email):
@@ -431,7 +260,7 @@ def cadastrar_usuario(
 
             conexao.commit()
 
-    except sqlite3.IntegrityError:
+    except ErroIntegridade:
         return (
             False,
             "Usuário ou e-mail já cadastrado."

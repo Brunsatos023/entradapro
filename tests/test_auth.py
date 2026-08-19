@@ -22,6 +22,7 @@ from _streamlit_stub import instalar_streamlit_falso  # noqa: E402
 instalar_streamlit_falso()
 
 import auth  # noqa: E402
+import db  # noqa: E402
 
 
 class TestesComBancoTemporario(unittest.TestCase):
@@ -33,13 +34,13 @@ class TestesComBancoTemporario(unittest.TestCase):
         )
         self._arquivo_temp.close()
 
-        self._caminho_original = auth.CAMINHO_BANCO
-        auth.CAMINHO_BANCO = Path(self._arquivo_temp.name)
+        self._caminho_original = db.CAMINHO_BANCO_SQLITE
+        db.CAMINHO_BANCO_SQLITE = Path(self._arquivo_temp.name)
 
         auth.inicializar_banco()
 
     def tearDown(self):
-        auth.CAMINHO_BANCO = self._caminho_original
+        db.CAMINHO_BANCO_SQLITE = self._caminho_original
         Path(self._arquivo_temp.name).unlink(missing_ok=True)
 
 
