@@ -19,6 +19,8 @@ from access_control import (
     renderizar_bloqueio_pro
 )
 
+from subscription_service import expirar_assinaturas_vencidas
+
 from ui import (
     aplicar_estilos,
     renderizar_cabecalho,
@@ -658,6 +660,7 @@ def main():
     aplicar_estilos()
     inicializar_estado()
     inicializar_banco()
+    expirar_assinaturas_vencidas()
     inicializar_estado_autenticacao()
 
     if usuario_esta_autenticado():
