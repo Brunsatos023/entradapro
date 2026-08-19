@@ -1,0 +1,55 @@
+# Ambiente virtual
+.venv/
+
+# Variáveis de ambiente (segredos reais - nunca versionar)
+.env
+.env.*
+!.env.example
+
+# Segredos do Streamlit
+.streamlit/secrets.toml
+
+# Bancos de dados locais (contêm dados reais de usuários)
+*.db
+*.sqlite
+*.sqlite3
+
+# Modelos treinados (arquivo binário pesado, não pertence ao controle de versão)
+*.pkl
+
+# Backups locais e arquivos de trabalho pessoal (organizados em /_arquivo_backups)
+_arquivo_backups/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+
+# VS Code
+.vscode/
+
+# Arquivos temporários
+*.tmp
+*.log
+
+# Testes
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Distribuição
+build/
+dist/
+*.egg-info/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos auxiliares temporários do desenvolvimento
+
+teste_corte.py
+src/notepad teste_corte.py
+data.txt
+estrutura.txt
+src.txt
+tests.txt
