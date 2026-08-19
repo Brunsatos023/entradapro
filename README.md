@@ -133,6 +133,33 @@ pytest tests/
 
 ---
 
+## Banco de dados: local (SQLite) vs. produção (PostgreSQL)
+
+Por padrão, o projeto usa SQLite (`data/entradapro_users.db`) — funciona
+sozinho, sem configuração extra, ideal para rodar na sua máquina.
+
+Para usar PostgreSQL (recomendado em produção), defina a variável de
+ambiente `DATABASE_URL` no `.env` com a connection string do seu banco
+(ex: do [Neon](https://neon.tech)):
+
+```
+DATABASE_URL=postgresql://usuario:senha@endereco/banco
+```
+
+Com essa variável definida, o projeto passa a usar PostgreSQL
+automaticamente — nenhum outro arquivo precisa mudar.
+
+**Para levar os dados que já existem no SQLite local para o PostgreSQL:**
+
+```bash
+python scripts/migrar_para_postgres.py "postgresql://usuario:senha@endereco/banco"
+```
+
+Esse script não apaga nem altera o banco local — é seguro rodar mais de
+uma vez (não duplica registros já migrados).
+
+---
+
 ## Segurança
 
 - O arquivo `.env` **nunca** deve ser commitado no Git — está protegido no
