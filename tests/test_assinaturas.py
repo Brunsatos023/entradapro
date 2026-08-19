@@ -126,6 +126,17 @@ class TestAtivacaoDeAssinatura(TestesComBancoTemporario):
         assinatura = sub.buscar_assinatura_por_id(self.assinatura_id)
         self.assertEqual(assinatura["status"], "CANCELADA")
 
+    def test_cancelar_assinatura_rebaixa_usuario_de_verdade(self):
+        """
+        Antes desta correção, cancelar a assinatura marcava o status
+        como CANCELADA mas o usuário continuava PRO para sempre.
+        """
+        sub.processar_assinatura_ativa(assinatura_id=self.assinatura_id)
+        sub.processar_assinatura_cancelada(assinatura_id=self.assinatura_id)
+
+        conta = auth.autenticar_usuario("bruno.assinante", "senhaforte123")
+        self.assertEqual(conta["plano"], "FREE")
+
     def test_assinatura_inexistente_nao_quebra_o_sistema(self):
         resultado = sub.processar_assinatura_ativa(assinatura_id=999999)
         self.assertFalse(resultado["sucesso"])
@@ -235,6 +246,77 @@ class TestControleAcessoFreePro(unittest.TestCase):
             "plano": " pro "
         }
         self.assertTrue(self.access_control.usuario_eh_pro())
+
+
+class TestExpiracaoAutomatica(TestesComBancoTemporario):
+
+    def setUp(self):
+        super().setUp()
+        resultado = sub.registrar_assinatura_pendente(
+            usuario_id=self.usuario_id, codigo_plano="PRO_MENSAL"
+        )
+        self.assinatura_id = resultado["assinatura_id"]
+
+    def test_assinatura_com_cobranca_futura_nao_e_afetada(self):
+        from datetime import datetime, timedelta
+        data_futura = (
+            datetime.now() + timedelta(days=10)
+        ).isoformat(timespec="seconds")
+
+        sub.processar_assinatura_ativa(
+            assinatura_id=self.assinatura_id,
+            proxima_cobranca_em=data_futura,
+        )
+
+        resultado = sub.expirar_assinaturas_vencidas()
+        self.assertEqual(resultado["expiradas"], 0)
+
+        conta = auth.autenticar_usuario("bruno.assinante", "senhaforte123")
+        self.assertEqual(conta["plano"], "PRO")
+
+    def test_assinatura_com_cobranca_vencida_e_expirada_automaticamente(self):
+        """
+        Simula o caso em que o webhook de cancelamento do Mercado
+        Pago nunca chegou (rede instável, etc.) - o usuário não pode
+        continuar PRO para sempre só porque um webhook se perdeu.
+        """
+        from datetime import datetime, timedelta
+        data_passada = (
+            datetime.now() - timedelta(days=1)
+        ).isoformat(timespec="seconds")
+
+        sub.processar_assinatura_ativa(
+            assinatura_id=self.assinatura_id,
+            proxima_cobranca_em=data_passada,
+        )
+        conta = auth.autenticar_usuario("bruno.assinante", "senhaforte123")
+        self.assertEqual(conta["plano"], "PRO")
+
+        resultado = sub.expirar_assinaturas_vencidas()
+        self.assertEqual(resultado["expiradas"], 1)
+
+        conta = auth.autenticar_usuario("bruno.assinante", "senhaforte123")
+        self.assertEqual(conta["plano"], "FREE")
+
+        assinatura = sub.buscar_assinatura_por_id(self.assinatura_id)
+        self.assertEqual(assinatura["status"], "EXPIRADA")
+
+    def test_rodar_duas_vezes_nao_da_erro(self):
+        from datetime import datetime, timedelta
+        data_passada = (
+            datetime.now() - timedelta(days=1)
+        ).isoformat(timespec="seconds")
+
+        sub.processar_assinatura_ativa(
+            assinatura_id=self.assinatura_id,
+            proxima_cobranca_em=data_passada,
+        )
+
+        primeira = sub.expirar_assinaturas_vencidas()
+        segunda = sub.expirar_assinaturas_vencidas()
+
+        self.assertEqual(primeira["expiradas"], 1)
+        self.assertEqual(segunda["expiradas"], 0)  # já não está mais ATIVA
 
 
 if __name__ == "__main__":

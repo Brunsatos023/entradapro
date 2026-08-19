@@ -14,6 +14,9 @@
 *.sqlite
 *.sqlite3
 
+# Logs (gerados automaticamente, não fazem parte do código)
+data/logs/
+
 # Modelos treinados (arquivo binário pesado, não pertence ao controle de versão)
 *.pkl
 

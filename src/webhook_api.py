@@ -2,8 +2,15 @@ import hashlib
 import hmac
 import json
 import os
+import sys
 from datetime import datetime
 from pathlib import Path
+
+# Garante que os outros arquivos de src/ (subscription_service.py,
+# payment_plans.py, etc.) sejam encontrados independente de como
+# este arquivo é iniciado (ex: "uvicorn src.webhook_api:app" a
+# partir da raiz do projeto).
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import requests
 from dotenv import load_dotenv
@@ -13,8 +20,35 @@ from fastapi import (
     Request
 )
 
+from subscription_service import processar_evento_mercado_pago
+
 
 load_dotenv()
+
+
+# ---------------------------------------------------------
+# Logging: grava em arquivo, além do console, para que seja
+# possível diagnosticar problemas depois (ex: um pagamento que
+# não ativou o usuário) mesmo sem estar olhando o terminal no
+# momento em que aconteceu.
+# ---------------------------------------------------------
+import logging  # noqa: E402
+
+PASTA_LOGS = Path(__file__).resolve().parents[1] / "data" / "logs"
+PASTA_LOGS.mkdir(parents=True, exist_ok=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(
+            PASTA_LOGS / "webhook.log", encoding="utf-8"
+        ),
+        logging.StreamHandler(),
+    ],
+)
+
+logger = logging.getLogger("entradapro.webhook")
 
 
 app = FastAPI(
@@ -670,6 +704,13 @@ async def webhook_mercado_pago(
             evento_invalido
         )
 
+        logger.warning(
+            "Webhook com assinatura INVALIDA rejeitado | "
+            "tipo=%s data_id=%s motivo=%s",
+            tipo, data_id,
+            resultado_validacao.get("motivo", "desconhecido"),
+        )
+
         raise HTTPException(
             status_code=401,
             detail=(
@@ -688,6 +729,7 @@ async def webhook_mercado_pago(
     )
 
     resumo_recurso = {}
+    resultado_processamento = {"acao": "nao_processado"}
 
     if resultado_consulta.get(
         "sucesso"
@@ -700,6 +742,24 @@ async def webhook_mercado_pago(
                 ]
             )
         )
+
+        try:
+            resultado_processamento = processar_evento_mercado_pago(
+                tipo=tipo,
+                resumo=resumo_recurso,
+            )
+        except Exception as erro:
+            # Nunca deixamos uma falha aqui derrubar a resposta ao
+            # Mercado Pago (isso faria ele reenviar o webhook
+            # repetidamente) - registramos o erro para investigar,
+            # e respondemos normalmente.
+            logger.exception(
+                "Erro ao processar evento do webhook: %s", erro
+            )
+            resultado_processamento = {
+                "acao": "erro",
+                "motivo": str(erro),
+            }
 
     evento = {
         "recebido_em": (
@@ -743,6 +803,7 @@ async def webhook_mercado_pago(
             )
         ),
         "recurso": resumo_recurso,
+        "processamento": resultado_processamento,
         "query_params": (
             query_params
         )
@@ -752,54 +813,17 @@ async def webhook_mercado_pago(
         evento
     )
 
-    print()
-    print(
-        "===== WEBHOOK MERCADO PAGO ====="
+    logger.info(
+        "Webhook recebido | tipo=%s acao=%s data_id=%s "
+        "status_recurso=%s external_reference=%s | "
+        "processamento=%s",
+        tipo,
+        acao,
+        data_id,
+        resumo_recurso.get("status") if resumo_recurso else None,
+        resumo_recurso.get("external_reference") if resumo_recurso else None,
+        resultado_processamento.get("acao"),
     )
-
-    print(
-        f"Tipo: {tipo}"
-    )
-
-    print(
-        f"Ação: {acao}"
-    )
-
-    print(
-        f"Data ID: {data_id}"
-    )
-
-    print(
-        "Assinatura válida: True"
-    )
-
-    print(
-        "Consulta Mercado Pago: "
-        f"{resultado_consulta.get('sucesso', False)}"
-    )
-
-    if resumo_recurso:
-        print(
-            "Status real: "
-            f"{resumo_recurso.get('status')}"
-        )
-
-        print(
-            "Referência externa: "
-            f"{resumo_recurso.get('external_reference')}"
-        )
-
-    else:
-        print(
-            "Consulta: "
-            f"{resultado_consulta.get('mensagem')}"
-        )
-
-    print(
-        "================================"
-    )
-
-    print()
 
     return {
         "received": True,
@@ -810,5 +834,6 @@ async def webhook_mercado_pago(
                 "sucesso",
                 False
             )
-        )
+        ),
+        "processing_action": resultado_processamento.get("acao"),
     }

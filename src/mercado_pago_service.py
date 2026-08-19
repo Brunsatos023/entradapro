@@ -286,7 +286,8 @@ def consultar_plano(
 
 
 def obter_link_checkout(
-    codigo_plano
+    codigo_plano,
+    external_reference=None
 ):
     resultado = consultar_plano(
         codigo_plano
@@ -325,6 +326,19 @@ def obter_link_checkout(
                 "o link de checkout."
             )
         }
+
+    # Anexa o nosso id interno da assinatura como external_reference,
+    # para que o webhook consiga identificar de qual usuário/
+    # assinatura se trata quando o Mercado Pago notificar o
+    # pagamento (sem isto, não há como saber quem pagou).
+    if external_reference:
+        from urllib.parse import quote
+
+        separador = "&" if "?" in init_point else "?"
+        init_point = (
+            f"{init_point}{separador}"
+            f"external_reference={quote(str(external_reference))}"
+        )
 
     return {
         "sucesso": True,

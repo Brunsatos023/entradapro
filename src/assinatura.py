@@ -291,7 +291,8 @@ def preparar_checkout(
 
     resultado_checkout = (
         obter_link_checkout(
-            codigo_plano
+            codigo_plano,
+            external_reference=assinatura_id
         )
     )
 
