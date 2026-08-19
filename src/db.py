@@ -200,6 +200,14 @@ def _inicializar_banco_sqlite():
                 "ALTER TABLE usuarios ADD COLUMN usuario TEXT"
             )
 
+        if "admin" not in nomes_colunas:
+            conexao.execute(
+                """
+                ALTER TABLE usuarios
+                ADD COLUMN admin INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
         conexao.execute(
             """
             CREATE UNIQUE INDEX IF NOT EXISTS
@@ -300,8 +308,19 @@ def _inicializar_banco_postgres():
                 senha_salt TEXT NOT NULL,
                 plano TEXT NOT NULL DEFAULT 'FREE',
                 ativo INTEGER NOT NULL DEFAULT 1,
+                admin INTEGER NOT NULL DEFAULT 0,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
+            """
+        )
+
+        # Bancos ja existentes (criados antes desta coluna existir)
+        # nao sao afetados pelo CREATE TABLE IF NOT EXISTS acima -
+        # entao garantimos a coluna aqui tambem, de forma segura.
+        conexao.execute(
+            """
+            ALTER TABLE usuarios
+            ADD COLUMN IF NOT EXISTS admin INTEGER NOT NULL DEFAULT 0
             """
         )
 
