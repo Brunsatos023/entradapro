@@ -42,6 +42,7 @@ from ui.overview import renderizar_overview
 from ui.prediction_foundations import renderizar_fundamentos_previsao
 from ui.performance_view import renderizar_performance_view
 from ui.methodology_view import renderizar_metodologia_view
+from ui.jogos_futuros import renderizar_jogos_futuros
 
 
 ARQUIVO_JSON = "brasileirao_serie_a_2024.json"
@@ -780,6 +781,24 @@ def main():
     )
 
     if usuario_esta_autenticado():
+        try:
+            selecao_jogo_futuro = renderizar_jogos_futuros(
+                nomes_times
+            )
+        except Exception:
+            # Falha silenciosa e segura: se a busca de jogos
+            # futuros der qualquer problema (sem chave de API,
+            # API fora do ar, etc.), o site continua funcionando
+            # normalmente com a seleção manual abaixo.
+            selecao_jogo_futuro = None
+
+        if selecao_jogo_futuro:
+            st.session_state.competicao_ativa = COMPETICAO_PADRAO
+            st.session_state.mandante_ativo = selecao_jogo_futuro[0]
+            st.session_state.visitante_ativo = selecao_jogo_futuro[1]
+            st.session_state.partida_analisada = True
+            st.rerun()
+
         resultado_seletor = renderizar_seletor_partida(
             competicoes=[
                 COMPETICAO_PADRAO
