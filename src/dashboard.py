@@ -44,6 +44,7 @@ from ui.performance_view import renderizar_performance_view
 from ui.methodology_view import renderizar_metodologia_view
 from ui.jogos_futuros import renderizar_jogos_futuros
 from ui.melhores_entradas import renderizar_melhores_entradas
+from ui.alertas_risco import renderizar_alertas_risco
 
 
 ARQUIVO_JSON = "brasileirao_serie_a_2024.json"
@@ -782,6 +783,11 @@ def main():
     )
 
     if usuario_esta_autenticado():
+        try:
+            renderizar_alertas_risco()
+        except Exception:
+            pass
+
         try:
             renderizar_melhores_entradas()
         except Exception:
