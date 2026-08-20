@@ -216,7 +216,21 @@ def renderizar_configuracoes_laterais():
 
     with st.sidebar:
         st.markdown(
-            "## ⚽ EntradaPro"
+            """
+            <div class="marca-lateral">
+                <div class="marca-lateral-selo">⚽</div>
+                <div>
+                    <div class="marca-lateral-nome">
+                        ENTRADA<span>PRO</span>
+                    </div>
+                    <div class="marca-lateral-tagline">
+                        FOOTBALL INTELLIGENCE
+                    </div>
+                </div>
+            </div>
+            <div class="marca-lateral-linha"></div>
+            """,
+            unsafe_allow_html=True
         )
 
         st.caption(

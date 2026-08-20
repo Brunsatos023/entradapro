@@ -43,6 +43,59 @@ def aplicar_estilos():
             letter-spacing: -0.01em;
         }
 
+        /* Marca na barra lateral - selo com borda dourada,
+           nome em duas cores, tagline espaçada estilo selo */
+        .marca-lateral {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .marca-lateral-selo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 2px solid var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 0 0 3px rgba(217, 163, 83, 0.15);
+            flex-shrink: 0;
+        }
+
+        .marca-lateral-nome {
+            font-family: 'Oswald', sans-serif;
+            color: #ffffff;
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            line-height: 1;
+        }
+
+        .marca-lateral-nome span {
+            color: var(--green);
+        }
+
+        .marca-lateral-tagline {
+            color: var(--green);
+            font-size: 9px;
+            letter-spacing: 0.16em;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .marca-lateral-linha {
+            height: 2px;
+            background: linear-gradient(
+                90deg, var(--green), transparent
+            );
+            margin: 12px 0 10px 0;
+            border-radius: 2px;
+        }
+
         </style>
         """,
         unsafe_allow_html=True
