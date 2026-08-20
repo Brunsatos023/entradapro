@@ -12,6 +12,7 @@ from db import (
     inicializar_banco,
     ErroIntegridade,
 )
+from email_service import enviar_email_recuperacao
 
 
 def _normalizar_email(email):
@@ -664,13 +665,38 @@ def _renderizar_esqueci_senha():
 
     if solicitar:
         sucesso, mensagem, codigo = solicitar_recuperacao_senha(email)
-        if sucesso:
-            st.info(mensagem)
-            if codigo:
-                st.session_state.email_recuperacao = _normalizar_email(email)
-                st.session_state.codigo_recuperacao_dev = codigo
+
+        if sucesso and codigo:
+            # Um codigo foi gerado - agora precisa ser ENVIADO por
+            # e-mail de verdade. Nunca mostramos o codigo na tela
+            # (isso permitiria qualquer pessoa "recuperar" a senha
+            # de outra pessoa so sabendo o e-mail dela).
+            email_enviado, erro_envio = enviar_email_recuperacao(
+                _normalizar_email(email), codigo
+            )
+
+            if email_enviado:
+                st.session_state.email_recuperacao = (
+                    _normalizar_email(email)
+                )
                 st.session_state.tela_auth = "redefinir_senha"
+                st.info(
+                    "Se o e-mail estiver cadastrado, um código foi "
+                    "enviado. Confira sua caixa de entrada (e o spam)."
+                )
                 st.rerun()
+            else:
+                st.error(
+                    "Não foi possível enviar o e-mail de recuperação "
+                    "no momento. Tente novamente mais tarde ou "
+                    "entre em contato com o suporte."
+                )
+        elif sucesso:
+            # sucesso=True mas codigo=None: e-mail nao cadastrado -
+            # mesma mensagem por segurança, sem revelar se existe
+            st.info(mensagem)
+        else:
+            st.error(mensagem)
 
     st.divider()
     if st.button(
@@ -685,19 +711,8 @@ def _renderizar_esqueci_senha():
 def _renderizar_redefinir_senha():
     st.markdown("### Redefinir senha")
     st.caption(
-        "Use o código temporário e crie uma nova senha."
+        "Use o código enviado por e-mail e crie uma nova senha."
     )
-
-    codigo_dev = st.session_state.get("codigo_recuperacao_dev")
-    if codigo_dev:
-        st.warning(
-            "MODO DE DESENVOLVIMENTO: "
-            f"código de recuperação: {codigo_dev}"
-        )
-        st.caption(
-            "Na versão publicada, este código será enviado ao e-mail "
-            "do usuário e não será exibido na tela."
-        )
 
     email = st.session_state.get("email_recuperacao", "")
 
