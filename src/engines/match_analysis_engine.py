@@ -9,12 +9,6 @@ from auto_tuning_service import obter_limiar_validacao_over15
 
 class MatchAnalysisEngine:
 
-    STATUS_OVER15_VALIDOS = {
-        "APTO",
-        "APTO FORTE",
-        "APTO EXPERIMENTAL"
-    }
-
     def __init__(
         self,
         partidas,

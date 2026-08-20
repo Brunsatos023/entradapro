@@ -15,14 +15,40 @@ probabilidades e identificação de oportunidades de valor (Value Betting).
   usuário final acessa: análise de partidas, comparação de times,
   probabilidades, indicadores de valor, planos FREE/PRO.
 - **Engines de análise** (`src/engines/`) — os motores que calculam forma
-  recente, desempenho casa/fora, rating, força do adversário, tendências e
-  identificação de valor (odds vs. probabilidade).
+  recente, desempenho casa/fora, rating, força do adversário, tendências,
+  identificação de valor (odds vs. probabilidade), jogos futuros reais,
+  odds automáticas, varredura de oportunidades e escanteios.
 - **Autenticação e assinaturas** (`src/auth.py`, `src/subscription_service.py`,
-  `src/mercado_pago_service.py`) — cadastro, login, planos e pagamentos via
-  Mercado Pago.
+  `src/mercado_pago_service.py`) — cadastro, login (com proteção contra
+  força bruta), planos e pagamentos via Mercado Pago.
 - **Webhook de pagamento** (`src/webhook_api.py`) — recebe as confirmações de
   pagamento do Mercado Pago (roda como um serviço separado do dashboard).
 - **Painel administrativo** (`src/admin_users.py`, `src/admin_plano.py`).
+- **"EntradaPro Autônomo"** — o sistema busca jogos futuros sozinho, escolhe
+  as melhores oportunidades do dia, guarda o histórico de cada previsão,
+  confere com o resultado real (Green/Red), ajusta seus próprios critérios
+  com base no desempenho, e alerta sobre sequências ruins recentes. Ver
+  `src/engines/fixtures_engine.py`, `opportunity_scanner.py`,
+  `src/prediction_history_service.py`, `src/auto_tuning_service.py` e
+  `src/risk_management_service.py`.
+- **Vitrine multi-campeonatos** (`src/ui/vitrine_campeonatos.py`) — Champions
+  League, Premier League, La Liga e outras, com placar ao vivo (exclusivo
+  PRO; sem análise completa do EntradaPro, que hoje só cobre o Brasileirão).
+- **Backup automático** (`scripts/backup_banco.py` +
+  `.github/workflows/backup_diario.yml`) — roda todo dia sozinho via GitHub
+  Actions, exportando os dados principais (sem senhas).
+
+---
+
+## Páginas do site (multipage do Streamlit)
+
+| Página | Arquivo | O que é |
+|---|---|---|
+| Dashboard | `src/dashboard.py` | Análise principal, jogos futuros, melhores entradas, vitrine |
+| Performance Analytics | `src/pages/1_Performance_Analytics.py` | Estatísticas de performance das engines |
+| Assinatura PRO | `src/pages/2_Assinatura_PRO.py` | Escolha de plano e checkout Mercado Pago |
+| Administração | `src/pages/3_Administracao.py` | Painel de admin (login próprio, exige permissão) |
+| Resultados | `src/pages/4_Resultados.py` | Histórico transparente de previsões e ROI real |
 
 ---
 
@@ -168,10 +194,26 @@ uma vez (não duplica registros já migrados).
   no controle de versão — são gerados/atualizados localmente.
 - Se você suspeitar que alguma credencial vazou, rotacione (gere uma nova)
   imediatamente no painel de origem (API-Football ou Mercado Pago).
+- Login protegido contra força bruta: 5 tentativas erradas seguidas
+  bloqueiam a conta por 15 minutos.
+- Backup diário automático (ver `.github/workflows/backup_diario.yml`) —
+  rede de segurança independente do provedor de banco de dados.
+
+---
+
+## Transparência das análises
+
+O EntradaPro guarda toda previsão que faz e confere com o resultado real
+(página "Resultados"). O histórico é sempre honesto, incluindo períodos
+negativos — análise estatística não é garantia de resultado, e isso fica
+visível em todos os pontos onde uma recomendação aparece na tela.
 
 ---
 
 ## Status do projeto
 
-Em desenvolvimento ativo rumo à V1 comercial. Veja `docs/` para
-documentação técnica adicional das engines de análise.
+Publicado em produção em `entradapro.com.br`, hospedado no Render
+(dashboard + webhook) com banco PostgreSQL (Neon). Veja `docs/` para
+documentação técnica adicional e `docs/ROADMAP_V2.md` para os próximos
+passos planejados (mais campeonatos com análise completa, reformulação
+de layout, etc.).
