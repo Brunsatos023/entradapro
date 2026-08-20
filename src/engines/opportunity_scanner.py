@@ -26,6 +26,7 @@ from engines.fixtures_engine import buscar_jogos_futuros
 from engines.match_analysis_engine import MatchAnalysisEngine
 from engines.odds_engine import buscar_melhores_odds
 from utils.nomes_times import encontrar_time_local
+from prediction_history_service import registrar_previsao
 
 
 JANELA_PADRAO = 5
@@ -113,7 +114,7 @@ def _analisar_um_jogo(jogo, partidas, nomes_para_id):
     if not resultado_value.get("value_bet"):
         return None
 
-    return {
+    oportunidade = {
         "fixture_id": jogo["fixture_id"],
         "data_iso": jogo.get("data_iso"),
         "mandante": mandante_local,
@@ -131,7 +132,25 @@ def _analisar_um_jogo(jogo, partidas, nomes_para_id):
         "classificacao": resultado_value["classificacao"],
     }
 
+    # Etapa C do roteiro autônomo: toda oportunidade encontrada
+    # já fica registrada sozinha na "memória" do sistema, para
+    # depois ser conferida contra o resultado real. Uma falha
+    # aqui não pode impedir a oportunidade de aparecer na tela.
+    try:
+        registrar_previsao(
+            fixture_id=oportunidade["fixture_id"],
+            mandante=oportunidade["mandante"],
+            visitante=oportunidade["visitante"],
+            mercado=oportunidade["melhor_mercado"],
+            odd=oportunidade["odd"],
+            probabilidade=oportunidade["probabilidade"],
+            edge=oportunidade["edge"],
+            data_jogo=oportunidade["data_iso"],
+        )
+    except Exception:
+        pass
 
+    return oportunidade
 def escanear_melhores_oportunidades(
     dias_a_frente=3,
     limite=10,

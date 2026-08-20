@@ -139,6 +139,71 @@ def _formatar_jogo(item_fixture):
     }
 
 
+def buscar_resultado_fixture(fixture_id):
+    """
+    Consulta o placar final de uma partida específica já
+    encerrada (usado para conferir se uma previsão feita
+    anteriormente deu Green ou Red).
+
+    Retorna {"sucesso": True, "gols_casa": int, "gols_visitante":
+    int, "encerrado": bool} ou {"sucesso": False, "mensagem": "..."}.
+    """
+    chave = _chave_api()
+
+    if not chave:
+        return {
+            "sucesso": False,
+            "mensagem": "API_FOOTBALL_KEY não configurada no .env.",
+        }
+
+    try:
+        resposta = requests.get(
+            f"{BASE_URL}/fixtures",
+            headers=_cabecalhos(),
+            params={"id": fixture_id},
+            timeout=20,
+        )
+    except requests.RequestException as erro:
+        return {
+            "sucesso": False,
+            "mensagem": f"Erro de conexão com a API-Football: {erro}",
+        }
+
+    if resposta.status_code != 200:
+        return {
+            "sucesso": False,
+            "mensagem": (
+                f"API-Football respondeu com status "
+                f"{resposta.status_code}."
+            ),
+        }
+
+    dados = resposta.json()
+    itens = dados.get("response", [])
+
+    if not itens:
+        return {
+            "sucesso": False,
+            "mensagem": "Partida não encontrada.",
+        }
+
+    item = itens[0]
+    status_curto = item.get("fixture", {}).get("status", {}).get("short")
+
+    # Códigos de status da API-Football que indicam jogo encerrado
+    encerrado = status_curto in {"FT", "AET", "PEN"}
+
+    gols = item.get("goals", {})
+
+    return {
+        "sucesso": True,
+        "encerrado": encerrado,
+        "status": status_curto,
+        "gols_casa": gols.get("home"),
+        "gols_visitante": gols.get("away"),
+    }
+
+
 def buscar_jogos_futuros(dias_a_frente=7):
     """
     Busca as partidas futuras do Brasileirão Série A entre hoje e

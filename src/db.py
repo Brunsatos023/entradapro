@@ -292,6 +292,46 @@ def _inicializar_banco_sqlite():
             """
         )
 
+        # Etapa C do roteiro "EntradaPro Autonomo": a "memoria" do
+        # sistema - toda previsao feita (manual ou pela varredura
+        # automatica) fica registrada aqui, para depois comparar
+        # com o resultado real (Green/Red/Void) e alimentar as
+        # estatisticas de acerto/ROI.
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS previsoes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fixture_id TEXT NOT NULL,
+                mandante TEXT NOT NULL,
+                visitante TEXT NOT NULL,
+                mercado TEXT NOT NULL,
+                odd REAL NOT NULL,
+                probabilidade REAL NOT NULL,
+                edge REAL NOT NULL,
+                data_jogo DATETIME,
+                status TEXT NOT NULL DEFAULT 'PENDENTE',
+                gols_casa_real INTEGER,
+                gols_visitante_real INTEGER,
+                criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                verificado_em DATETIME
+            )
+            """
+        )
+
+        conexao.execute(
+            """
+            CREATE UNIQUE INDEX IF NOT EXISTS
+            idx_previsoes_fixture_mercado
+            ON previsoes(fixture_id, mercado)
+            """
+        )
+        conexao.execute(
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_previsoes_status ON previsoes(status)
+            """
+        )
+
         conexao.commit()
 
 
@@ -396,6 +436,35 @@ def _inicializar_banco_postgres():
             """
             CREATE INDEX IF NOT EXISTS
             idx_pagamentos_status ON pagamentos(status)
+            """
+        )
+
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS previsoes (
+                id SERIAL PRIMARY KEY,
+                fixture_id TEXT NOT NULL,
+                mandante TEXT NOT NULL,
+                visitante TEXT NOT NULL,
+                mercado TEXT NOT NULL,
+                odd REAL NOT NULL,
+                probabilidade REAL NOT NULL,
+                edge REAL NOT NULL,
+                data_jogo TIMESTAMP,
+                status TEXT NOT NULL DEFAULT 'PENDENTE',
+                gols_casa_real INTEGER,
+                gols_visitante_real INTEGER,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                verificado_em TIMESTAMP,
+                UNIQUE (fixture_id, mercado)
+            )
+            """
+        )
+
+        conexao.execute(
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_previsoes_status ON previsoes(status)
             """
         )
 
