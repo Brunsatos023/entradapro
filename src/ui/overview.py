@@ -109,6 +109,13 @@ def renderizar_overview(
         )
     )
 
+    over25 = float(
+        resultado_prediction.get(
+            "mais_25",
+            0.0
+        )
+    )
+
     btts = float(
         resultado_prediction.get(
             "ambas_marcam",
@@ -123,6 +130,16 @@ def renderizar_overview(
 
     status_over15 = resultado_prediction.get(
         "status_estrategico_over15",
+        "NÃO AVALIADO"
+    )
+
+    classificacao_over25 = resultado_prediction.get(
+        "classificacao_over25",
+        "NÃO CLASSIFICADO"
+    )
+
+    status_over25 = resultado_prediction.get(
+        "status_estrategico_over25",
         "NÃO AVALIADO"
     )
 
@@ -347,6 +364,39 @@ def renderizar_overview(
                 status_over15,
                 positivo=(
                     status_over15
+                    in {
+                        "APTO",
+                        "APTO FORTE",
+                        "APTO EXPERIMENTAL"
+                    }
+                )
+            )
+
+    with st.container(
+        border=True
+    ):
+        col1, col2 = st.columns(
+            [4, 1]
+        )
+
+        with col1:
+            st.markdown(
+                f"**Mais de 2,5 gols — {over25:.2f}%**"
+            )
+
+            _renderizar_barra(
+                over25
+            )
+
+            st.caption(
+                f"{classificacao_over25} • {status_over25}"
+            )
+
+        with col2:
+            _renderizar_status(
+                status_over25,
+                positivo=(
+                    status_over25
                     in {
                         "APTO",
                         "APTO FORTE",

@@ -21,6 +21,7 @@ class MatchAnalysisEngine:
         id_visitante,
         odd_over15,
         odd_btts,
+        odd_over25=None,
         janela=5
     ):
         self.partidas = partidas
@@ -28,6 +29,9 @@ class MatchAnalysisEngine:
         self.id_visitante = id_visitante
         self.odd_over15 = float(odd_over15)
         self.odd_btts = float(odd_btts)
+        self.odd_over25 = (
+            float(odd_over25) if odd_over25 else None
+        )
         self.janela = janela
 
     def analisar(self):
@@ -179,6 +183,18 @@ class MatchAnalysisEngine:
 
             "resultado_value": resultado_value,
 
+            "resultado_over25": (
+                selecao_mercado[
+                    "resultado_over25"
+                ]
+            ),
+
+            "status_over25": (
+                selecao_mercado[
+                    "status_over25"
+                ]
+            ),
+
             "resultado_oportunidade": (
                 resultado_oportunidade
             ),
@@ -189,6 +205,9 @@ class MatchAnalysisEngine:
                 ],
                 "ambas_marcam": selecao_mercado[
                     "resultado_btts"
+                ],
+                "mais_25": selecao_mercado[
+                    "resultado_over25"
                 ]
             }
         }
@@ -242,6 +261,28 @@ class MatchAnalysisEngine:
                 "detalhes": resultado_btts
             }
 
+        # Mais de 2,5 gols: exibido como informação adicional,
+        # mas NÃO participa da disputa por "melhor mercado" -
+        # diferente do Over 1.5, ainda não passou pela validação
+        # multitemporada (backtest) que a regra estratégica V1
+        # exige antes de recomendar um mercado formalmente.
+        resultado_over25 = None
+
+        if self.odd_over25:
+            probabilidade_over25 = float(
+                resultado_prediction.get(
+                    "mais_25",
+                    0
+                )
+            )
+
+            resultado_over25 = ValueEngine(
+                probabilidade_footballai=(
+                    probabilidade_over25
+                ),
+                odd_casa=self.odd_over25
+            ).analisar()
+
         status_over15 = resultado_prediction.get(
             "status_estrategico_over15",
             "NÃO APTO"
@@ -250,6 +291,11 @@ class MatchAnalysisEngine:
         status_btts = resultado_prediction.get(
             "status_estrategico_btts",
             "NÃO VALIDADO"
+        )
+
+        status_over25 = resultado_prediction.get(
+            "status_estrategico_over25",
+            "NÃO APTO"
         )
 
         over15_validado = (
@@ -299,6 +345,10 @@ class MatchAnalysisEngine:
                     resultado_btts
                 ),
 
+                "resultado_over25": (
+                    resultado_over25
+                ),
+
                 "recomendacao_validada": True,
 
                 "motivo_validacao": (
@@ -312,6 +362,10 @@ class MatchAnalysisEngine:
 
                 "status_btts": (
                     status_btts
+                ),
+
+                "status_over25": (
+                    status_over25
                 )
             }
 
@@ -364,6 +418,10 @@ class MatchAnalysisEngine:
                 resultado_btts
             ),
 
+            "resultado_over25": (
+                resultado_over25
+            ),
+
             "recomendacao_validada": False,
 
             "motivo_validacao": (
@@ -378,5 +436,9 @@ class MatchAnalysisEngine:
 
             "status_btts": (
                 status_btts
+            ),
+
+            "status_over25": (
+                status_over25
             )
         }

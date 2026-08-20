@@ -61,6 +61,7 @@ class HomeAwayEngine:
         gols_marcados = 0
         gols_sofridos = 0
         jogos_over15 = 0
+        jogos_over25 = 0
         jogos_btts = 0
 
         for partida in partidas:
@@ -87,6 +88,9 @@ class HomeAwayEngine:
             if gols_casa + gols_fora >= 2:
                 jogos_over15 += 1
 
+            if gols_casa + gols_fora >= 3:
+                jogos_over25 += 1
+
             if gols_casa > 0 and gols_fora > 0:
                 jogos_btts += 1
 
@@ -106,6 +110,10 @@ class HomeAwayEngine:
 
         percentual_over15 = (
             jogos_over15 / total_jogos * 100
+        )
+
+        percentual_over25 = (
+            jogos_over25 / total_jogos * 100
         )
 
         percentual_btts = (
@@ -139,6 +147,7 @@ class HomeAwayEngine:
             "media_gols_marcados": media_gols_marcados,
             "media_gols_sofridos": media_gols_sofridos,
             "percentual_over15": percentual_over15,
+            "percentual_over25": percentual_over25,
             "percentual_btts": percentual_btts,
             "nota": nota_mando
         }

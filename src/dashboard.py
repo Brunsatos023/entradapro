@@ -142,7 +142,8 @@ def calcular_analise_completa(
     id_mandante,
     id_visitante,
     odd_over15,
-    odd_btts
+    odd_btts,
+    odd_over25=None
 ):
     resultado = MatchAnalysisEngine(
         partidas=partidas,
@@ -150,6 +151,7 @@ def calcular_analise_completa(
         id_visitante=id_visitante,
         odd_over15=odd_over15,
         odd_btts=odd_btts,
+        odd_over25=odd_over25,
         janela=JANELA
     ).analisar()
 
@@ -248,6 +250,16 @@ def renderizar_configuracoes_laterais():
                 key="odd_over15"
             )
 
+            odd_over25 = st.number_input(
+                "Odd — Mais de 2,5 gols",
+                min_value=1.01,
+                max_value=20.00,
+                value=2.10,
+                step=0.01,
+                format="%.2f",
+                key="odd_over25"
+            )
+
             odd_btts = st.number_input(
                 "Odd — Ambas marcam",
                 min_value=1.01,
@@ -271,6 +283,17 @@ def renderizar_configuracoes_laterais():
             )
 
             st.number_input(
+                "Odd — Mais de 2,5 gols",
+                min_value=1.01,
+                max_value=20.00,
+                value=2.10,
+                step=0.01,
+                format="%.2f",
+                disabled=True,
+                key="odd_over25_visitante"
+            )
+
+            st.number_input(
                 "Odd — Ambas marcam",
                 min_value=1.01,
                 max_value=20.00,
@@ -290,6 +313,7 @@ def renderizar_configuracoes_laterais():
                 st.rerun()
 
             odd_over15 = 1.40
+            odd_over25 = 2.10
             odd_btts = 1.70
 
         st.divider()
@@ -302,6 +326,7 @@ def renderizar_configuracoes_laterais():
 
     return {
         "odd_over15": odd_over15,
+        "odd_over25": odd_over25,
         "odd_btts": odd_btts
     }
 
@@ -878,6 +903,10 @@ def main():
         "odd_over15"
     ]
 
+    odd_over25 = configuracao_lateral.get(
+        "odd_over25"
+    )
+
     odd_btts = configuracao_lateral[
         "odd_btts"
     ]
@@ -899,7 +928,8 @@ def main():
                 id_mandante=id_mandante,
                 id_visitante=id_visitante,
                 odd_over15=odd_over15,
-                odd_btts=odd_btts
+                odd_btts=odd_btts,
+                odd_over25=odd_over25
             )
 
     except Exception as erro:

@@ -117,6 +117,54 @@ class MatchPredictor:
             2
         )
 
+    def calcular_mais_25(self):
+        historico_mais_25 = (
+            self.casa["percentual_over25"]
+            + self.fora["percentual_over25"]
+        ) / 2
+
+        expectativa = self.calcular_expectativa_gols()
+
+        fator_gols = limitar_percentual(
+            expectativa["gols_esperados_total"]
+            / 3.5
+            * 100
+        )
+
+        forca_ofensiva = (
+            self.casa["media_gols_marcados"]
+            + self.fora["media_gols_marcados"]
+        ) / 2
+
+        fator_ofensivo = limitar_percentual(
+            forca_ofensiva
+            / 3
+            * 100
+        )
+
+        vulnerabilidade_defensiva = (
+            self.casa["media_gols_sofridos"]
+            + self.fora["media_gols_sofridos"]
+        ) / 2
+
+        fator_defensivo = limitar_percentual(
+            vulnerabilidade_defensiva
+            / 2.5
+            * 100
+        )
+
+        score = (
+            historico_mais_25 * 0.45
+            + fator_gols * 0.25
+            + fator_ofensivo * 0.15
+            + fator_defensivo * 0.15
+        )
+
+        return round(
+            limitar_percentual(score),
+            2
+        )
+
     def calcular_ambas_marcam(self):
         historico_btts = (
             self.casa["percentual_btts"]
@@ -205,6 +253,47 @@ class MatchPredictor:
 
         return motivos
 
+    def gerar_motivos_mais_25(self):
+        motivos = []
+
+        media_historica = (
+            self.casa["percentual_over25"]
+            + self.fora["percentual_over25"]
+        ) / 2
+
+        expectativa = self.calcular_expectativa_gols()
+
+        media_ataques = (
+            self.casa["media_gols_marcados"]
+            + self.fora["media_gols_marcados"]
+        ) / 2
+
+        if media_historica >= 60:
+            motivos.append(
+                "Alta frequência recente de jogos "
+                "com três gols ou mais."
+            )
+
+        if expectativa["gols_esperados_total"] >= 2.7:
+            motivos.append(
+                "A expectativa combinada de gols "
+                "é igual ou superior a 2,7."
+            )
+
+        if media_ataques >= 1.7:
+            motivos.append(
+                "As equipes apresentam produção "
+                "ofensiva recente elevada."
+            )
+
+        if not motivos:
+            motivos.append(
+                "Os dados recentes não apresentam "
+                "sinais fortes para este mercado."
+            )
+
+        return motivos
+
     def gerar_motivos_btts(self):
         motivos = []
 
@@ -276,6 +365,30 @@ class MatchPredictor:
 
         return "NÃO APTO"
 
+    def classificar_over25(self, score):
+        if score >= 80:
+            return "SINAL MUITO FORTE"
+
+        if score >= 72:
+            return "SINAL FORTE"
+
+        if score >= 60:
+            return "SINAL"
+
+        return "NÃO QUALIFICADA"
+
+    def classificar_status_estrategico_over25(self, score):
+        if score >= 80:
+            return "APTO EXPERIMENTAL"
+
+        if score >= 72:
+            return "APTO FORTE"
+
+        if score >= 60:
+            return "APTO"
+
+        return "NÃO APTO"
+
     def classificar_btts(self, score):
         if score >= 80:
             return "SINAL ALTO"
@@ -300,6 +413,7 @@ class MatchPredictor:
         expectativa = self.calcular_expectativa_gols()
 
         score_mais_15 = self.calcular_mais_15()
+        score_mais_25 = self.calcular_mais_25()
         score_btts = self.calcular_ambas_marcam()
 
         if score_mais_15 >= score_btts:
@@ -335,6 +449,18 @@ class MatchPredictor:
                 )
             ),
 
+            "mais_25": score_mais_25,
+            "classificacao_over25": (
+                self.classificar_over25(
+                    score_mais_25
+                )
+            ),
+            "status_estrategico_over25": (
+                self.classificar_status_estrategico_over25(
+                    score_mais_25
+                )
+            ),
+
             "ambas_marcam": score_btts,
             "classificacao_btts": (
                 self.classificar_btts(
@@ -350,6 +476,9 @@ class MatchPredictor:
 
             "motivos_mais_15": (
                 self.gerar_motivos_mais_15()
+            ),
+            "motivos_mais_25": (
+                self.gerar_motivos_mais_25()
             ),
             "motivos_btts": (
                 self.gerar_motivos_btts()
