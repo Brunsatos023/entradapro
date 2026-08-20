@@ -3,6 +3,13 @@ import pandas as pd
 
 from data_storage import carregar_json
 from engines.match_analysis_engine import MatchAnalysisEngine
+from streamlit_secrets_bootstrap import (
+    configurar_secrets_google,
+    google_login_configurado,
+)
+from google_auth_service import obter_ou_criar_usuario_google
+
+configurar_secrets_google()
 
 from auth import (
     inicializar_banco,
@@ -720,6 +727,22 @@ def main():
     inicializar_banco()
     expirar_assinaturas_vencidas()
     inicializar_estado_autenticacao()
+
+    if (
+        google_login_configurado()
+        and st.user.is_logged_in
+        and not usuario_esta_autenticado()
+    ):
+        try:
+            conta_google = obter_ou_criar_usuario_google(
+                email=st.user.email,
+                nome=st.user.name,
+            )
+            st.session_state.usuario_autenticado = True
+            st.session_state.usuario = conta_google
+            st.rerun()
+        except Exception:
+            pass
 
     if not usuario_esta_autenticado():
         renderizar_acoes_visitante_topo()

@@ -832,6 +832,12 @@ def fazer_logout():
         False
     )
 
+    # Se a pessoa entrou pelo Google, precisa encerrar tambem a
+    # sessao do Google - senao, na proxima recarga da pagina, o
+    # sistema loga ela de volta sozinho automaticamente.
+    if getattr(st.user, "is_logged_in", False):
+        st.logout()
+
     st.rerun()
 
 
@@ -872,6 +878,18 @@ def _renderizar_login():
     st.caption(
         "Acesse sua conta para continuar."
     )
+
+    from streamlit_secrets_bootstrap import google_login_configurado
+
+    if google_login_configurado():
+        if st.button(
+            "🔵 Continuar com Google",
+            use_container_width=True,
+            key="botao_login_google"
+        ):
+            st.login()
+
+        st.divider()
 
     with st.form(
         "form_login"
@@ -957,6 +975,18 @@ def _renderizar_cadastro():
     st.caption(
         "Cadastre-se para acessar o EntradaPro."
     )
+
+    from streamlit_secrets_bootstrap import google_login_configurado
+
+    if google_login_configurado():
+        if st.button(
+            "🔵 Continuar com Google",
+            use_container_width=True,
+            key="botao_cadastro_google"
+        ):
+            st.login()
+
+        st.divider()
 
     with st.form(
         "form_cadastro"

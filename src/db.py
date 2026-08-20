@@ -225,6 +225,15 @@ def _inicializar_banco_sqlite():
                 """
             )
 
+        if "login_google" not in nomes_colunas:
+            conexao.execute(
+                """
+                ALTER TABLE usuarios
+                ADD COLUMN login_google
+                INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
         conexao.execute(
             """
             CREATE UNIQUE INDEX IF NOT EXISTS
@@ -384,6 +393,7 @@ def _inicializar_banco_postgres():
                 admin INTEGER NOT NULL DEFAULT 0,
                 tentativas_login_falhas INTEGER NOT NULL DEFAULT 0,
                 bloqueado_ate TIMESTAMP,
+                login_google INTEGER NOT NULL DEFAULT 0,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """
@@ -411,6 +421,14 @@ def _inicializar_banco_postgres():
             """
             ALTER TABLE usuarios
             ADD COLUMN IF NOT EXISTS bloqueado_ate TIMESTAMP
+            """
+        )
+
+        conexao.execute(
+            """
+            ALTER TABLE usuarios
+            ADD COLUMN IF NOT EXISTS login_google
+            INTEGER NOT NULL DEFAULT 0
             """
         )
 

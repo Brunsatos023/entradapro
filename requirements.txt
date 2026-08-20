@@ -9,7 +9,8 @@
 # ==========================================================
 
 # --- Aplicação principal (dashboard) ---
-streamlit>=1.38
+# >=1.42 necessário para st.login() (autenticação nativa com Google)
+streamlit>=1.42
 
 # --- Dados e análise ---
 pandas>=2.2
