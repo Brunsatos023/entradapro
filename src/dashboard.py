@@ -46,6 +46,7 @@ from ui.jogos_futuros import renderizar_jogos_futuros
 from ui.melhores_entradas import renderizar_melhores_entradas
 from ui.alertas_risco import renderizar_alertas_risco
 from ui.corners_view import renderizar_secao_corners
+from ui.vitrine_campeonatos import renderizar_vitrine_campeonatos
 
 
 ARQUIVO_JSON = "brasileirao_serie_a_2024.json"
@@ -791,6 +792,11 @@ def main():
 
         try:
             renderizar_melhores_entradas()
+        except Exception:
+            pass
+
+        try:
+            renderizar_vitrine_campeonatos()
         except Exception:
             pass
 
