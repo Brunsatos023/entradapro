@@ -402,7 +402,7 @@ def aplicar_estilos():
         div.stButton > button {
             width: 100%;
 
-            min-height: 42px;
+            min-height: 44px;
 
             color:
                 #061b14;
@@ -1899,6 +1899,74 @@ def aplicar_estilos():
 
                 padding:
                     0 10px;
+            }
+        }
+
+
+        /* Telas bem pequenas (iPhone SE, celulares mais estreitos) */
+        @media screen and (max-width: 420px) {
+
+            .block-container {
+                padding-left:
+                    0.6rem;
+
+                padding-right:
+                    0.6rem;
+            }
+
+
+            .hero {
+                padding:
+                    14px;
+            }
+
+
+            .hero-title {
+                font-size:
+                    24px;
+            }
+
+
+            .hero-subtitle {
+                font-size:
+                    11px;
+            }
+
+
+            .hero-indicador {
+                font-size:
+                    10px;
+
+                padding:
+                    4px 9px;
+            }
+
+
+            .match-name {
+                font-size:
+                    18px;
+            }
+
+
+            .section-title {
+                font-size:
+                    16px;
+            }
+
+
+            div.stButton > button {
+                font-size:
+                    13px;
+            }
+
+
+            .metric-value,
+            .metric-value-green,
+            .premium-card-value,
+            .premium-card-value-green,
+            .premium-card-value-red {
+                font-size:
+                    22px !important;
             }
         }
 
