@@ -45,6 +45,7 @@ from ui.methodology_view import renderizar_metodologia_view
 from ui.jogos_futuros import renderizar_jogos_futuros
 from ui.melhores_entradas import renderizar_melhores_entradas
 from ui.alertas_risco import renderizar_alertas_risco
+from ui.corners_view import renderizar_secao_corners
 
 
 ARQUIVO_JSON = "brasileirao_serie_a_2024.json"
@@ -1033,6 +1034,16 @@ def main():
             resultado_value=resultado_value,
             resultado_oportunidade=resultado_oportunidade
         )
+
+        st.divider()
+
+        try:
+            renderizar_secao_corners(
+                id_mandante=id_mandante,
+                id_visitante=id_visitante,
+            )
+        except Exception:
+            pass
 
     with aba_analise:
 
