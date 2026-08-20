@@ -62,8 +62,8 @@ def aplicar_estilos():
             --bg-card: #122e21;
             --bg-card-soft: #163627;
 
-            --border: rgba(126, 158, 191, 0.20);
-            --border-strong: rgba(126, 158, 191, 0.34);
+            --border: rgba(134, 183, 150, 0.20);
+            --border-strong: rgba(134, 183, 150, 0.34);
 
             --text-primary: #fcfbfa;
             --text-secondary: #bcc8b6;
@@ -153,7 +153,7 @@ def aplicar_estilos():
                 );
 
             border-right:
-                1px solid rgba(126, 158, 191, 0.17);
+                1px solid rgba(134, 183, 150, 0.17);
         }
 
 
@@ -176,37 +176,39 @@ def aplicar_estilos():
             background:
                 radial-gradient(
                     circle at 90% 20%,
-                    rgba(83, 217, 159, 0.08),
+                    rgba(217, 163, 83, 0.10),
                     transparent 30%
                 ),
                 linear-gradient(
                     125deg,
-                    rgba(18, 40, 64, 0.98),
-                    rgba(9, 27, 46, 0.98)
+                    rgba(15, 36, 27, 0.98),
+                    rgba(6, 16, 11, 0.98)
                 );
 
             border:
-                1px solid rgba(99, 139, 180, 0.28);
+                1px solid rgba(99, 180, 139, 0.28);
 
-            border-radius: 20px;
+            border-radius: 18px;
 
-            padding: 22px 28px;
+            padding: 18px 24px;
 
-            margin-bottom: 16px;
+            margin-bottom: 14px;
 
             box-shadow:
-                0 12px 35px rgba(0, 0, 0, 0.22);
+                0 10px 28px rgba(0, 0, 0, 0.22);
         }
 
 
         .hero-title {
+            font-family: 'Oswald', sans-serif;
+
             color: #ffffff;
 
-            font-size: 36px;
+            font-size: 32px;
 
-            font-weight: 850;
+            font-weight: 700;
 
-            letter-spacing: -0.8px;
+            letter-spacing: 0.01em;
 
             margin: 0;
         }
@@ -228,6 +230,27 @@ def aplicar_estilos():
         }
 
 
+        .hero-indicador {
+            display: inline-block;
+
+            margin-top: 12px;
+
+            padding: 5px 12px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            color: var(--green);
+
+            background: rgba(217, 163, 83, 0.12);
+
+            border: 1px solid rgba(217, 163, 83, 0.30);
+
+            border-radius: 999px;
+        }
+
+
         /* ==========================================================
            NAVEGAÇÃO POR ABAS
            ========================================================== */
@@ -244,10 +267,10 @@ def aplicar_estilos():
                 6px;
 
             background:
-                rgba(7, 20, 35, 0.70);
+                rgba(10, 32, 22, 0.70);
 
             border:
-                1px solid rgba(126, 158, 191, 0.14);
+                1px solid rgba(134, 183, 150, 0.14);
 
             border-radius:
                 14px;
@@ -298,7 +321,7 @@ def aplicar_estilos():
                 rgba(255, 255, 255, 0.035);
 
             border-color:
-                rgba(126, 158, 191, 0.15);
+                rgba(134, 183, 150, 0.15);
         }
 
 
@@ -306,16 +329,16 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     135deg,
-                    rgba(83, 217, 159, 0.15),
-                    rgba(40, 126, 97, 0.09)
+                    rgba(217, 163, 83, 0.15),
+                    rgba(126, 92, 40, 0.09)
                 ) !important;
 
             border:
-                1px solid rgba(83, 217, 159, 0.30) !important;
+                1px solid rgba(217, 163, 83, 0.30) !important;
 
             box-shadow:
                 inset 0 0 0 1px
-                rgba(83, 217, 159, 0.035);
+                rgba(217, 163, 83, 0.035);
         }
 
 
@@ -368,7 +391,7 @@ def aplicar_estilos():
                 10px !important;
 
             border-color:
-                rgba(126, 158, 191, 0.18) !important;
+                rgba(134, 183, 150, 0.18) !important;
         }
 
 
@@ -392,7 +415,7 @@ def aplicar_estilos():
                 );
 
             border:
-                1px solid rgba(100, 232, 180, 0.40);
+                1px solid rgba(232, 179, 100, 0.40);
 
             border-radius:
                 10px;
@@ -402,7 +425,7 @@ def aplicar_estilos():
 
             box-shadow:
                 0 8px 20px
-                rgba(35, 181, 124, 0.18);
+                rgba(181, 123, 35, 0.18);
 
             transition:
                 all 0.18s ease;
@@ -421,14 +444,14 @@ def aplicar_estilos():
                 );
 
             border:
-                1px solid rgba(118, 239, 192, 0.60);
+                1px solid rgba(239, 191, 118, 0.60);
 
             transform:
                 translateY(-1px);
 
             box-shadow:
                 0 10px 24px
-                rgba(35, 181, 124, 0.25);
+                rgba(181, 123, 35, 0.25);
         }
 
 
@@ -438,7 +461,7 @@ def aplicar_estilos():
 
         .match-header {
             background:
-                rgba(14, 31, 50, 0.90);
+                rgba(17, 47, 33, 0.90);
 
             border:
                 1px solid var(--border);
@@ -553,12 +576,12 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     145deg,
-                    rgba(18, 35, 56, 0.88),
-                    rgba(12, 27, 45, 0.88)
+                    rgba(21, 53, 38, 0.88),
+                    rgba(15, 42, 29, 0.88)
                 );
 
             border:
-                1px solid rgba(126, 158, 191, 0.17);
+                1px solid rgba(134, 183, 150, 0.17);
 
             border-radius:
                 13px;
@@ -625,8 +648,8 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     145deg,
-                    rgba(17, 34, 55, 0.95),
-                    rgba(11, 26, 44, 0.95)
+                    rgba(20, 52, 37, 0.95),
+                    rgba(14, 41, 28, 0.95)
                 );
 
             border:
@@ -699,12 +722,12 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     145deg,
-                    rgba(18, 39, 62, 0.97),
-                    rgba(9, 24, 41, 0.97)
+                    rgba(22, 58, 41, 0.97),
+                    rgba(12, 38, 26, 0.97)
                 );
 
             border:
-                1px solid rgba(112, 151, 190, 0.25);
+                1px solid rgba(122, 180, 141, 0.25);
 
             border-radius:
                 18px;
@@ -753,7 +776,7 @@ def aplicar_estilos():
             background:
                 radial-gradient(
                     circle,
-                    rgba(83, 217, 159, 0.09),
+                    rgba(217, 163, 83, 0.09),
                     transparent 68%
                 );
 
@@ -767,7 +790,7 @@ def aplicar_estilos():
                 translateY(-2px);
 
             border-color:
-                rgba(83, 217, 159, 0.40);
+                rgba(217, 163, 83, 0.40);
 
             box-shadow:
                 0 14px 34px
@@ -784,7 +807,7 @@ def aplicar_estilos():
                 );
 
             border-color:
-                rgba(83, 217, 159, 0.42);
+                rgba(217, 163, 83, 0.42);
         }
 
 
@@ -805,8 +828,8 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     145deg,
-                    rgba(27, 44, 64, 0.97),
-                    rgba(13, 27, 44, 0.97)
+                    rgba(30, 61, 47, 0.97),
+                    rgba(16, 41, 29, 0.97)
                 );
         }
 
@@ -962,11 +985,11 @@ def aplicar_estilos():
                 6px 11px;
 
             background:
-                rgba(83, 217, 159, 0.12);
+                rgba(217, 163, 83, 0.12);
 
             border:
                 1px solid
-                rgba(83, 217, 159, 0.30);
+                rgba(217, 163, 83, 0.30);
 
             color:
                 #e4b672;
@@ -981,10 +1004,10 @@ def aplicar_estilos():
 
         .premium-badge-neutral {
             background:
-                rgba(142, 164, 189, 0.10);
+                rgba(148, 183, 160, 0.10);
 
             border-color:
-                rgba(142, 164, 189, 0.23);
+                rgba(148, 183, 160, 0.23);
 
             color:
                 #c5d0bf;
@@ -1095,7 +1118,7 @@ def aplicar_estilos():
 
             box-shadow:
                 0 0 12px
-                rgba(83, 217, 159, 0.22);
+                rgba(217, 163, 83, 0.22);
         }
 
 
@@ -1319,7 +1342,7 @@ def aplicar_estilos():
 
         .premium-favorite-card {
             border-color:
-                rgba(83, 217, 159, 0.48);
+                rgba(217, 163, 83, 0.48);
         }
 
 
@@ -1386,7 +1409,7 @@ def aplicar_estilos():
 
             border:
                 1px solid
-                rgba(53, 182, 133, 0.55);
+                rgba(182, 130, 53, 0.55);
 
             border-radius:
                 18px;
@@ -1464,7 +1487,7 @@ def aplicar_estilos():
 
         .value-item {
             background:
-                rgba(5, 15, 25, 0.28);
+                rgba(7, 23, 16, 0.28);
 
             border:
                 1px solid
@@ -1509,13 +1532,13 @@ def aplicar_estilos():
         .stApp
         [data-testid="stVerticalBlockBorderWrapper"] {
             border-color:
-                rgba(126, 158, 191, 0.17) !important;
+                rgba(134, 183, 150, 0.17) !important;
 
             background:
                 linear-gradient(
                     145deg,
-                    rgba(12, 28, 46, 0.62),
-                    rgba(8, 22, 38, 0.62)
+                    rgba(15, 43, 30, 0.62),
+                    rgba(11, 35, 24, 0.62)
                 );
 
             border-radius:
@@ -1609,13 +1632,13 @@ def aplicar_estilos():
         [data-testid="stExpander"] {
             border:
                 1px solid
-                rgba(126, 158, 191, 0.15) !important;
+                rgba(134, 183, 150, 0.15) !important;
 
             border-radius:
                 11px !important;
 
             background:
-                rgba(9, 24, 41, 0.35);
+                rgba(12, 38, 26, 0.35);
         }
 
 
@@ -1668,7 +1691,7 @@ def aplicar_estilos():
         [data-testid="stDataFrame"] {
             border:
                 1px solid
-                rgba(126, 158, 191, 0.15);
+                rgba(134, 183, 150, 0.15);
 
             border-radius:
                 12px;
@@ -1691,11 +1714,11 @@ def aplicar_estilos():
         [data-testid="stVegaLiteChart"],
         [data-testid="stPlotlyChart"] {
             background:
-                rgba(8, 22, 38, 0.38);
+                rgba(11, 35, 24, 0.38);
 
             border:
                 1px solid
-                rgba(126, 158, 191, 0.13);
+                rgba(134, 183, 150, 0.13);
 
             border-radius:
                 14px;

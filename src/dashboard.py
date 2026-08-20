@@ -680,7 +680,12 @@ def main():
     if not usuario_esta_autenticado():
         renderizar_acoes_visitante_topo()
 
-    renderizar_cabecalho()
+    try:
+        total_partidas_base = len(carregar_dados())
+    except Exception:
+        total_partidas_base = None
+
+    renderizar_cabecalho(total_partidas_base)
     renderizar_dialogo_autenticacao()
 
     st.warning(
