@@ -4,6 +4,7 @@ from predictor import MatchPredictor
 
 from engines.value_engine import ValueEngine
 from engines.opportunity_engine import OpportunityEngine
+from auto_tuning_service import obter_limiar_validacao_over15
 
 
 class MatchAnalysisEngine:
@@ -298,10 +299,23 @@ class MatchAnalysisEngine:
             "NÃO APTO"
         )
 
-        over15_validado = (
-            status_over15
-            in self.STATUS_OVER15_VALIDOS
+        # Etapa D do roteiro autonomo: em vez de um criterio fixo
+        # no codigo, o limiar minimo para considerar o Over 1.5
+        # "validado" vem do auto_tuning_service - que pode ajustar
+        # esse numero sozinho, com base no desempenho real
+        # acumulado (ver auto_tuning_service.py). Comeca em 70,
+        # exatamente igual ao comportamento original ("APTO"),
+        # ate que haja dados reais suficientes para mudar.
+        try:
+            limiar_over15 = obter_limiar_validacao_over15()
+        except Exception:
+            limiar_over15 = 70.0
+
+        score_over15 = float(
+            resultado_prediction.get("mais_15", 0)
         )
+
+        over15_validado = score_over15 >= limiar_over15
 
         valor_esperado_over15 = float(
             resultado_over15[

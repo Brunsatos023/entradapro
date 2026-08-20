@@ -332,6 +332,22 @@ def _inicializar_banco_sqlite():
             """
         )
 
+        # Etapa D do roteiro "EntradaPro Autonomo": parametros que
+        # o proprio sistema pode ajustar sozinho com base no
+        # desempenho real (ver auto_tuning_service.py). Guardados
+        # aqui em vez de hardcoded no codigo, para poderem mudar
+        # sem precisar de um novo deploy.
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS config_dinamica (
+                chave TEXT PRIMARY KEY,
+                valor REAL NOT NULL,
+                atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                motivo_ultima_atualizacao TEXT
+            )
+            """
+        )
+
         conexao.commit()
 
 
@@ -465,6 +481,17 @@ def _inicializar_banco_postgres():
             """
             CREATE INDEX IF NOT EXISTS
             idx_previsoes_status ON previsoes(status)
+            """
+        )
+
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS config_dinamica (
+                chave TEXT PRIMARY KEY,
+                valor REAL NOT NULL,
+                atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                motivo_ultima_atualizacao TEXT
+            )
             """
         )
 

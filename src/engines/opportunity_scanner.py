@@ -27,6 +27,7 @@ from engines.match_analysis_engine import MatchAnalysisEngine
 from engines.odds_engine import buscar_melhores_odds
 from utils.nomes_times import encontrar_time_local
 from prediction_history_service import registrar_previsao
+from auto_tuning_service import avaliar_e_ajustar_criterios
 
 
 JANELA_PADRAO = 5
@@ -201,6 +202,16 @@ def escanear_melhores_oportunidades(
         key=lambda o: o["edge"],
         reverse=True,
     )
+
+    # Etapa D do roteiro autonomo: aproveita o momento da
+    # varredura para reavaliar se os criterios precisam de
+    # ajuste, com base no desempenho real acumulado ate agora.
+    # Uma falha aqui nao pode impedir a varredura de retornar
+    # as oportunidades encontradas.
+    try:
+        avaliar_e_ajustar_criterios()
+    except Exception:
+        pass
 
     return {
         "sucesso": True,
