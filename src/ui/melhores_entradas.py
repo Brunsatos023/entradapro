@@ -100,3 +100,15 @@ def renderizar_melhores_entradas():
                     "entradas do dia, não só a primeira."
                 )
             )
+
+        st.caption(
+            "⚠️ Estas são análises estatísticas, não garantias de "
+            "resultado. Aposta não é investimento — jogue com "
+            "responsabilidade."
+        )
+
+        st.page_link(
+            "pages/4_Resultados.py",
+            label="📊 Ver histórico real de acertos (Green/Red/ROI)",
+            use_container_width=True
+        )

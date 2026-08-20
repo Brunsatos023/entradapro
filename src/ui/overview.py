@@ -448,3 +448,14 @@ def renderizar_overview(
                     status_btts,
                     positivo=False
                 )
+
+    st.caption(
+        "⚠️ Análise estatística baseada em dados históricos, não "
+        "é garantia de resultado. Aposta não é investimento."
+    )
+
+    st.page_link(
+        "pages/4_Resultados.py",
+        label="📊 Ver histórico real de acertos do EntradaPro",
+        use_container_width=True
+    )

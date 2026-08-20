@@ -42,6 +42,12 @@ st.caption(
     "automaticamente pelo sistema, comparadas com o resultado real."
 )
 
+st.info(
+    "Este histórico mostra os resultados reais, incluindo "
+    "períodos negativos. Desempenho passado não garante "
+    "resultado futuro. Aposta não é investimento."
+)
+
 if not usuario_esta_autenticado():
     st.info(
         "Faça login para acompanhar o histórico de previsões."
