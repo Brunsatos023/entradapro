@@ -882,12 +882,16 @@ def _renderizar_login():
     from streamlit_secrets_bootstrap import google_login_configurado
 
     if google_login_configurado():
-        if st.button(
-            "🔵 Continuar com Google",
-            use_container_width=True,
-            key="botao_login_google"
-        ):
-            st.login()
+        st.caption("Ou entre com:")
+
+        col_google, _ = st.columns([1, 3])
+
+        with col_google:
+            if st.button(
+                "🔵 Google",
+                key="botao_login_google"
+            ):
+                st.login()
 
         st.divider()
 
@@ -979,12 +983,16 @@ def _renderizar_cadastro():
     from streamlit_secrets_bootstrap import google_login_configurado
 
     if google_login_configurado():
-        if st.button(
-            "🔵 Continuar com Google",
-            use_container_width=True,
-            key="botao_cadastro_google"
-        ):
-            st.login()
+        st.caption("Ou cadastre-se com:")
+
+        col_google, _ = st.columns([1, 3])
+
+        with col_google:
+            if st.button(
+                "🔵 Google",
+                key="botao_cadastro_google"
+            ):
+                st.login()
 
         st.divider()
 

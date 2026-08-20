@@ -455,7 +455,7 @@ def renderizar_overview(
     )
 
     st.page_link(
-        "pages/4_Resultados.py",
+        "pages/4_📈_Resultados.py",
         label="📊 Ver histórico real de acertos do EntradaPro",
         use_container_width=True
     )

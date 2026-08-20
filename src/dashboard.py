@@ -249,7 +249,7 @@ def renderizar_configuracoes_laterais():
             renderizar_usuario_sidebar()
 
             st.page_link(
-                "pages/2_Assinatura_PRO.py",
+                "pages/2_⭐_Assinatura_PRO.py",
                 label="⭐ EntradaPro PRO",
                 use_container_width=True
             )

@@ -57,7 +57,7 @@ def renderizar_bloqueio_pro(
     )
 
     st.page_link(
-        "pages/2_Assinatura_PRO.py",
+        "pages/2_⭐_Assinatura_PRO.py",
         label="⭐ Conhecer o EntradaPro PRO",
         use_container_width=True
     )
