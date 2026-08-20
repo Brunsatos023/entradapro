@@ -61,7 +61,11 @@ def aplicar_estilos():
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--green);
             box-shadow: 0 0 0 3px rgba(217, 163, 83, 0.15);
             flex-shrink: 0;
         }

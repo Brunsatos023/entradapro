@@ -218,7 +218,7 @@ def renderizar_configuracoes_laterais():
         st.markdown(
             """
             <div class="marca-lateral">
-                <div class="marca-lateral-selo">⚽</div>
+                <div class="marca-lateral-selo">EP</div>
                 <div>
                     <div class="marca-lateral-nome">
                         ENTRADA<span>PRO</span>
