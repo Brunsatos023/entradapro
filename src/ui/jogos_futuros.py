@@ -10,47 +10,10 @@ aqui - o restante do site (seleção manual) continua funcionando
 normalmente.
 """
 
-import unicodedata
-
 import streamlit as st
 
 from engines.fixtures_engine import buscar_jogos_futuros
-
-
-def _normalizar_nome(nome):
-    """
-    Remove acentos e caixa para comparar nomes de times com
-    segurança (ex: "São Paulo" da API vs "Sao Paulo" do dataset
-    local precisam ser reconhecidos como o mesmo time).
-    """
-    sem_acento = unicodedata.normalize("NFKD", str(nome or ""))
-    sem_acento = "".join(
-        c for c in sem_acento if not unicodedata.combining(c)
-    )
-    return sem_acento.strip().lower()
-
-
-def _encontrar_time_local(nome_api, nomes_times_locais):
-    """
-    Tenta casar o nome de um time vindo da API-Football com o
-    nome correspondente no dataset local. Retorna o nome local
-    exato (para reaproveitar toda a análise já existente) ou None
-    se esse time não estiver no dataset local.
-    """
-    alvo = _normalizar_nome(nome_api)
-
-    for nome_local in nomes_times_locais:
-        candidato = _normalizar_nome(nome_local)
-
-        if alvo == candidato:
-            return nome_local
-
-        # Casamento parcial (ex: "Atletico-MG" vs "Atletico
-        # Mineiro", ou nomes com sufixo tipo "EC", "DA Gama")
-        if alvo in candidato or candidato in alvo:
-            return nome_local
-
-    return None
+from utils.nomes_times import encontrar_time_local
 
 
 def renderizar_jogos_futuros(nomes_times_locais):
@@ -82,10 +45,10 @@ def renderizar_jogos_futuros(nomes_times_locais):
         )
 
         for jogo in jogos:
-            mandante_local = _encontrar_time_local(
+            mandante_local = encontrar_time_local(
                 jogo["mandante"], nomes_times_locais
             )
-            visitante_local = _encontrar_time_local(
+            visitante_local = encontrar_time_local(
                 jogo["visitante"], nomes_times_locais
             )
 

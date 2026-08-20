@@ -43,6 +43,7 @@ from ui.prediction_foundations import renderizar_fundamentos_previsao
 from ui.performance_view import renderizar_performance_view
 from ui.methodology_view import renderizar_metodologia_view
 from ui.jogos_futuros import renderizar_jogos_futuros
+from ui.melhores_entradas import renderizar_melhores_entradas
 
 
 ARQUIVO_JSON = "brasileirao_serie_a_2024.json"
@@ -781,6 +782,11 @@ def main():
     )
 
     if usuario_esta_autenticado():
+        try:
+            renderizar_melhores_entradas()
+        except Exception:
+            pass
+
         try:
             selecao_jogo_futuro = renderizar_jogos_futuros(
                 nomes_times
