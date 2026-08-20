@@ -173,6 +173,61 @@ class TestLogin(TestesComBancoTemporario):
         self.assertGreater(len(linha["senha_hash"]), 20)
 
 
+class TestBloqueioPorTentativas(TestesComBancoTemporario):
+
+    def setUp(self):
+        super().setUp()
+        auth.cadastrar_usuario(
+            nome="Bruno Bloqueio",
+            usuario="bruno.bloqueio",
+            email="bloqueio@example.com",
+            senha="senhacerta123",
+            confirmar_senha="senhacerta123",
+        )
+
+    def test_tentativas_abaixo_do_limite_nao_bloqueiam(self):
+        for _ in range(auth.MAX_TENTATIVAS_LOGIN - 1):
+            self.assertIsNone(
+                auth.autenticar_usuario("bruno.bloqueio", "errada")
+            )
+
+        conta = auth.autenticar_usuario(
+            "bruno.bloqueio", "senhacerta123"
+        )
+        self.assertIsNotNone(conta)
+
+    def test_atinge_o_limite_bloqueia_mesmo_com_senha_certa(self):
+        for _ in range(auth.MAX_TENTATIVAS_LOGIN):
+            auth.autenticar_usuario("bruno.bloqueio", "errada")
+
+        conta = auth.autenticar_usuario(
+            "bruno.bloqueio", "senhacerta123"
+        )
+        self.assertIsNone(conta)
+
+    def test_login_com_sucesso_zera_o_contador(self):
+        for _ in range(2):
+            auth.autenticar_usuario("bruno.bloqueio", "errada")
+
+        auth.autenticar_usuario("bruno.bloqueio", "senhacerta123")
+
+        with auth._conectar_banco() as conexao:
+            linha = conexao.execute(
+                "SELECT tentativas_login_falhas FROM usuarios "
+                "WHERE usuario = ?",
+                ("bruno.bloqueio",),
+            ).fetchone()
+
+        self.assertEqual(linha["tentativas_login_falhas"], 0)
+
+    def test_usuario_inexistente_nao_gera_erro_de_bloqueio(self):
+        # nao deve quebrar so por nao existir - so retorna None
+        for _ in range(10):
+            self.assertIsNone(
+                auth.autenticar_usuario("nao.existe.nunca", "qualquer")
+            )
+
+
 class TestRecuperacaoSenha(TestesComBancoTemporario):
 
     def setUp(self):

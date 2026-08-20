@@ -208,6 +208,23 @@ def _inicializar_banco_sqlite():
                 """
             )
 
+        if "tentativas_login_falhas" not in nomes_colunas:
+            conexao.execute(
+                """
+                ALTER TABLE usuarios
+                ADD COLUMN tentativas_login_falhas
+                INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
+        if "bloqueado_ate" not in nomes_colunas:
+            conexao.execute(
+                """
+                ALTER TABLE usuarios
+                ADD COLUMN bloqueado_ate DATETIME
+                """
+            )
+
         conexao.execute(
             """
             CREATE UNIQUE INDEX IF NOT EXISTS
@@ -365,18 +382,35 @@ def _inicializar_banco_postgres():
                 plano TEXT NOT NULL DEFAULT 'FREE',
                 ativo INTEGER NOT NULL DEFAULT 1,
                 admin INTEGER NOT NULL DEFAULT 0,
+                tentativas_login_falhas INTEGER NOT NULL DEFAULT 0,
+                bloqueado_ate TIMESTAMP,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """
         )
 
-        # Bancos ja existentes (criados antes desta coluna existir)
+        # Bancos ja existentes (criados antes destas colunas existirem)
         # nao sao afetados pelo CREATE TABLE IF NOT EXISTS acima -
-        # entao garantimos a coluna aqui tambem, de forma segura.
+        # entao garantimos as colunas aqui tambem, de forma segura.
         conexao.execute(
             """
             ALTER TABLE usuarios
             ADD COLUMN IF NOT EXISTS admin INTEGER NOT NULL DEFAULT 0
+            """
+        )
+
+        conexao.execute(
+            """
+            ALTER TABLE usuarios
+            ADD COLUMN IF NOT EXISTS tentativas_login_falhas
+            INTEGER NOT NULL DEFAULT 0
+            """
+        )
+
+        conexao.execute(
+            """
+            ALTER TABLE usuarios
+            ADD COLUMN IF NOT EXISTS bloqueado_ate TIMESTAMP
             """
         )
 

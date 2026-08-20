@@ -134,7 +134,9 @@ def _buscar_usuario_por_nome_usuario(
                 senha_hash,
                 senha_salt,
                 plano,
-                ativo
+                ativo,
+                tentativas_login_falhas,
+                bloqueado_ate
             FROM usuarios
             WHERE usuario = ?
             """,
@@ -271,6 +273,91 @@ def cadastrar_usuario(
         "Conta criada com sucesso."
     )
 
+MAX_TENTATIVAS_LOGIN = 5
+MINUTOS_BLOQUEIO_LOGIN = 15
+
+
+def _para_datetime(valor):
+    if valor is None:
+        return None
+
+    if isinstance(valor, datetime):
+        return valor
+
+    try:
+        return datetime.fromisoformat(str(valor))
+    except ValueError:
+        return None
+
+
+def _usuario_esta_bloqueado(conta):
+    bloqueado_ate = _para_datetime(conta["bloqueado_ate"])
+
+    if not bloqueado_ate:
+        return False
+
+    return datetime.now() < bloqueado_ate
+
+
+def _registrar_tentativa_falha(usuario_id, tentativas_atuais):
+    novas_tentativas = int(tentativas_atuais) + 1
+
+    bloqueado_ate = None
+    if novas_tentativas >= MAX_TENTATIVAS_LOGIN:
+        bloqueado_ate = (
+            datetime.now()
+            + timedelta(minutes=MINUTOS_BLOQUEIO_LOGIN)
+        ).isoformat(timespec="seconds")
+
+    with _conectar_banco() as conexao:
+        conexao.execute(
+            """
+            UPDATE usuarios
+            SET tentativas_login_falhas = ?, bloqueado_ate = ?
+            WHERE id = ?
+            """,
+            (novas_tentativas, bloqueado_ate, usuario_id),
+        )
+        conexao.commit()
+
+
+def _resetar_tentativas_login(usuario_id):
+    with _conectar_banco() as conexao:
+        conexao.execute(
+            """
+            UPDATE usuarios
+            SET tentativas_login_falhas = 0, bloqueado_ate = NULL
+            WHERE id = ?
+            """,
+            (usuario_id,),
+        )
+        conexao.commit()
+
+
+def obter_minutos_restantes_bloqueio(usuario):
+    """
+    Se a conta estiver temporariamente bloqueada por excesso de
+    tentativas de login, retorna quantos minutos faltam para
+    liberar. Retorna None se não estiver bloqueada (ou se o
+    usuário não existir - não revela isso por segurança).
+    """
+    conta = _buscar_usuario_por_nome_usuario(usuario)
+
+    if not conta:
+        return None
+
+    bloqueado_ate = _para_datetime(conta["bloqueado_ate"])
+
+    if not bloqueado_ate or datetime.now() >= bloqueado_ate:
+        return None
+
+    segundos_restantes = (
+        bloqueado_ate - datetime.now()
+    ).total_seconds()
+
+    return max(1, round(segundos_restantes / 60))
+
+
 def autenticar_usuario(
     usuario,
     senha
@@ -293,6 +380,9 @@ def autenticar_usuario(
     ) != 1:
         return None
 
+    if _usuario_esta_bloqueado(conta):
+        return None
+
     senha_valida = (
         _validar_senha(
             senha=senha,
@@ -306,7 +396,12 @@ def autenticar_usuario(
     )
 
     if not senha_valida:
+        _registrar_tentativa_falha(
+            conta["id"], conta["tentativas_login_falhas"]
+        )
         return None
+
+    _resetar_tentativas_login(conta["id"])
 
     return {
         "id": conta[
@@ -789,9 +884,20 @@ def _renderizar_login():
         )
 
         if not usuario:
-            st.error(
-                "Usuário ou senha inválidos."
+            minutos_restantes = (
+                obter_minutos_restantes_bloqueio(nome_usuario)
             )
+
+            if minutos_restantes:
+                st.error(
+                    "Muitas tentativas de login. "
+                    f"Tente novamente em {minutos_restantes} "
+                    "minuto(s)."
+                )
+            else:
+                st.error(
+                    "Usuário ou senha inválidos."
+                )
 
         else:
             st.session_state.usuario_autenticado = (
