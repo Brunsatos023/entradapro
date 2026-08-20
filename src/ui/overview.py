@@ -1,6 +1,6 @@
 import streamlit as st
 
-from access_control import usuario_eh_pro
+from access_control import usuario_eh_pro, renderizar_bloqueio_pro
 
 
 def _limitar_percentual(valor):
@@ -375,58 +375,76 @@ def renderizar_overview(
     with st.container(
         border=True
     ):
-        col1, col2 = st.columns(
-            [4, 1]
-        )
-
-        with col1:
-            st.markdown(
-                f"**Mais de 2,5 gols — {over25:.2f}%**"
-            )
-
-            _renderizar_barra(
-                over25
-            )
-
-            st.caption(
-                f"{classificacao_over25} • {status_over25}"
-            )
-
-        with col2:
-            _renderizar_status(
-                status_over25,
-                positivo=(
-                    status_over25
-                    in {
-                        "APTO",
-                        "APTO FORTE",
-                        "APTO EXPERIMENTAL"
-                    }
+        if not usuario_eh_pro():
+            renderizar_bloqueio_pro(
+                titulo="Mercado +2,5 gols",
+                mensagem=(
+                    "Análise do mercado de mais de 2,5 gols "
+                    "disponível para assinantes PRO."
                 )
             )
+        else:
+            col1, col2 = st.columns(
+                [4, 1]
+            )
+
+            with col1:
+                st.markdown(
+                    f"**Mais de 2,5 gols — {over25:.2f}%**"
+                )
+
+                _renderizar_barra(
+                    over25
+                )
+
+                st.caption(
+                    f"{classificacao_over25} • {status_over25}"
+                )
+
+            with col2:
+                _renderizar_status(
+                    status_over25,
+                    positivo=(
+                        status_over25
+                        in {
+                            "APTO",
+                            "APTO FORTE",
+                            "APTO EXPERIMENTAL"
+                        }
+                    )
+                )
 
     with st.container(
         border=True
     ):
-        col1, col2 = st.columns(
-            [4, 1]
-        )
-
-        with col1:
-            st.markdown(
-                f"**Ambas marcam — {btts:.2f}%**"
+        if not usuario_eh_pro():
+            renderizar_bloqueio_pro(
+                titulo="Mercado Ambas Marcam",
+                mensagem=(
+                    "Análise do mercado Ambas Marcam "
+                    "disponível para assinantes PRO."
+                )
+            )
+        else:
+            col1, col2 = st.columns(
+                [4, 1]
             )
 
-            _renderizar_barra(
-                btts
-            )
+            with col1:
+                st.markdown(
+                    f"**Ambas marcam — {btts:.2f}%**"
+                )
 
-            st.caption(
-                f"{classificacao_btts} • {status_btts}"
-            )
+                _renderizar_barra(
+                    btts
+                )
 
-        with col2:
-            _renderizar_status(
-                status_btts,
-                positivo=False
-            )
+                st.caption(
+                    f"{classificacao_btts} • {status_btts}"
+                )
+
+            with col2:
+                _renderizar_status(
+                    status_btts,
+                    positivo=False
+                )

@@ -11,6 +11,7 @@ simplesmente não aparece - o resto do site continua normal.
 
 import streamlit as st
 
+from access_control import usuario_eh_pro, renderizar_bloqueio_pro
 from engines.opportunity_scanner import escanear_melhores_oportunidades
 
 
@@ -30,6 +31,13 @@ def renderizar_melhores_entradas():
     if not oportunidades:
         return
 
+    eh_pro = usuario_eh_pro()
+
+    # Free ve so a primeira oportunidade (teaser); PRO ve todas.
+    oportunidades_visiveis = (
+        oportunidades if eh_pro else oportunidades[:1]
+    )
+
     with st.container(border=True):
         st.markdown("### 🔥 Melhores Entradas do Dia")
 
@@ -39,7 +47,7 @@ def renderizar_melhores_entradas():
             "com as odds reais do mercado."
         )
 
-        for oportunidade in oportunidades:
+        for oportunidade in oportunidades_visiveis:
             with st.container(border=True):
                 col_info, col_metrica = st.columns([3, 1])
 
@@ -69,3 +77,19 @@ def renderizar_melhores_entradas():
                         "Value",
                         f"+{oportunidade['edge']:.1f}%"
                     )
+
+        oportunidades_ocultas = len(oportunidades) - len(
+            oportunidades_visiveis
+        )
+
+        if not eh_pro and oportunidades_ocultas > 0:
+            renderizar_bloqueio_pro(
+                titulo=(
+                    f"+{oportunidades_ocultas} oportunidade(s) "
+                    "adicional(is) disponível(is) no PRO"
+                ),
+                mensagem=(
+                    "Assinantes PRO veem todas as melhores "
+                    "entradas do dia, não só a primeira."
+                )
+            )
