@@ -49,7 +49,7 @@ from ui.overview import renderizar_overview
 from ui.prediction_foundations import renderizar_fundamentos_previsao
 from ui.performance_view import renderizar_performance_view
 from ui.methodology_view import renderizar_metodologia_view
-from ui.jogos_futuros import renderizar_jogos_futuros
+from ui.lista_principal import renderizar_lista_principal
 from ui.melhores_entradas import renderizar_melhores_entradas
 from ui.alertas_risco import renderizar_alertas_risco
 from ui.corners_view import renderizar_secao_corners
@@ -837,23 +837,21 @@ def main():
         except Exception:
             pass
 
-        try:
-            selecao_jogo_futuro = renderizar_jogos_futuros(
-                nomes_times
-            )
-        except Exception:
-            # Falha silenciosa e segura: se a busca de jogos
-            # futuros der qualquer problema (sem chave de API,
-            # API fora do ar, etc.), o site continua funcionando
-            # normalmente com a seleção manual abaixo.
-            selecao_jogo_futuro = None
-
-        if selecao_jogo_futuro:
+        def _selecionar_jogo_da_lista(mandante, visitante):
             st.session_state.competicao_ativa = COMPETICAO_PADRAO
-            st.session_state.mandante_ativo = selecao_jogo_futuro[0]
-            st.session_state.visitante_ativo = selecao_jogo_futuro[1]
+            st.session_state.mandante_ativo = mandante
+            st.session_state.visitante_ativo = visitante
             st.session_state.partida_analisada = True
             st.rerun()
+
+        try:
+            renderizar_lista_principal(_selecionar_jogo_da_lista)
+        except Exception:
+            # Falha silenciosa e segura: se a lista principal der
+            # qualquer problema (sem chave de API, API fora do ar,
+            # etc.), o site continua funcionando normalmente com a
+            # seleção manual abaixo.
+            pass
 
         resultado_seletor = renderizar_seletor_partida(
             competicoes=[
