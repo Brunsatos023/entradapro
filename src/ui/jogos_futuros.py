@@ -19,6 +19,11 @@ from engines.fixtures_engine import buscar_jogos_futuros
 from utils.nomes_times import encontrar_time_local
 
 
+@st.cache_data(ttl=600, show_spinner=False)
+def _buscar_jogos_futuros_com_cache(dias_a_frente):
+    return buscar_jogos_futuros(dias_a_frente=dias_a_frente)
+
+
 DIAS_SEMANA = [
     "Segunda", "Terça", "Quarta", "Quinta",
     "Sexta", "Sábado", "Domingo",
@@ -67,7 +72,7 @@ def renderizar_jogos_futuros(nomes_times_locais):
     Retorna None se nada foi clicado (ou se a busca falhou / não
     há jogos disponíveis - falha silenciosa e segura).
     """
-    resultado = buscar_jogos_futuros(dias_a_frente=7)
+    resultado = _buscar_jogos_futuros_com_cache(dias_a_frente=7)
 
     if not resultado.get("sucesso"):
         return None

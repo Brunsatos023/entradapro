@@ -11,13 +11,20 @@ simplesmente não aparece - o resto do site continua normal.
 
 import streamlit as st
 
-from access_control import usuario_eh_pro, renderizar_bloqueio_pro
 from engines.opportunity_scanner import escanear_melhores_oportunidades
+from access_control import usuario_eh_pro, renderizar_bloqueio_pro
+
+
+@st.cache_data(ttl=600, show_spinner=False)
+def _escanear_com_cache(dias_a_frente, limite):
+    return escanear_melhores_oportunidades(
+        dias_a_frente=dias_a_frente, limite=limite
+    )
 
 
 def renderizar_melhores_entradas():
     try:
-        resultado = escanear_melhores_oportunidades(
+        resultado = _escanear_com_cache(
             dias_a_frente=3, limite=5
         )
     except Exception:
