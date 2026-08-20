@@ -1,0 +1,52 @@
+# ==========================================================
+# Backup diário automático do banco de dados de produção
+# ==========================================================
+# Roda sozinho todo dia às 6h da manhã (horário de Brasília),
+# exporta as tabelas principais e salva o resultado neste
+# mesmo repositório, na pasta /backups.
+#
+# Rede de segurança independente do Neon, cujo plano gratuito
+# só guarda 6 horas de histórico de recuperação.
+#
+# Não precisa fazer nada manualmente - só garantir que o
+# segredo DATABASE_URL esteja configurado (ver instruções).
+# ==========================================================
+
+name: Backup diário do banco
+
+on:
+  schedule:
+    # 09:00 UTC = 06:00 no horário de Brasília
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+    # permite rodar manualmente também, pelo botão "Run workflow"
+    # na aba Actions do GitHub
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install psycopg2-binary python-dotenv
+
+      - name: Rodar o backup
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python scripts/backup_banco.py
+
+      - name: Salvar o backup no repositório
+        run: |
+          git config user.name "EntradaPro Backup Bot"
+          git config user.email "backup@entradapro.com.br"
+          git add backups/
+          git diff --cached --quiet && echo "Nada novo para commitar" || git commit -m "backup automatico $(date +'%Y-%m-%d %H:%M')"
+          git push
