@@ -82,11 +82,20 @@ def renderizar_lista_principal(callback_selecao):
         return
 
     if not resultado.get("sucesso"):
+        logger.warning(
+            "Lista principal: busca sem sucesso - %s",
+            resultado.get("mensagem", "sem mensagem"),
+        )
         return
 
     jogos = resultado.get("jogos", [])
 
     if not jogos:
+        logger.info(
+            "Lista principal: busca OK, mas 0 jogos retornados "
+            "(nenhum time casou com o dataset local, ou nao ha "
+            "jogos nos proximos dias)."
+        )
         return
 
     quantidade_oportunidades = sum(

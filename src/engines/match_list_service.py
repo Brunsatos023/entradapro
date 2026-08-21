@@ -16,6 +16,9 @@ from engines.match_analysis_engine import MatchAnalysisEngine
 from engines.odds_engine import buscar_melhores_odds
 from utils.nomes_times import encontrar_time_local
 
+import logging
+logger = logging.getLogger("entradapro.dashboard")
+
 
 ODD_PLACEHOLDER = 1.01  # usada so para o calculo rodar quando nao ha odd real
 
@@ -119,9 +122,19 @@ def construir_lista_jogos(
     busca_jogos = buscar_jogos_futuros(dias_a_frente=dias_a_frente)
 
     if not busca_jogos.get("sucesso"):
+        logger.warning(
+            "construir_lista_jogos: buscar_jogos_futuros falhou - %s",
+            busca_jogos.get("mensagem", "sem mensagem"),
+        )
         return busca_jogos
 
     jogos = busca_jogos.get("jogos", [])
+
+    logger.info(
+        "construir_lista_jogos: API retornou %d jogo(s) no bruto "
+        "para os proximos %d dias.",
+        len(jogos), dias_a_frente,
+    )
 
     if not jogos:
         return {"sucesso": True, "jogos": []}
@@ -137,11 +150,27 @@ def construir_lista_jogos(
             entrada = _analisar_um_jogo_para_lista(
                 jogo, partidas, nomes_para_id
             )
-        except Exception:
+        except Exception as erro:
+            logger.exception(
+                "construir_lista_jogos: erro ao analisar %s x %s: %s",
+                jogo.get("mandante"), jogo.get("visitante"), erro,
+            )
             entrada = None
 
         if entrada:
             resultados.append(entrada)
+        else:
+            logger.info(
+                "construir_lista_jogos: jogo %s x %s descartado "
+                "(time fora do dataset local, ou analise falhou).",
+                jogo.get("mandante"), jogo.get("visitante"),
+            )
+
+    logger.info(
+        "construir_lista_jogos: %d de %d jogos passaram no filtro "
+        "e serao exibidos.",
+        len(resultados), len(jogos),
+    )
 
     resultados.sort(key=lambda j: j.get("data_iso") or "")
 

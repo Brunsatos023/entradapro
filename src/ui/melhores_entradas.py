@@ -37,11 +37,19 @@ def renderizar_melhores_entradas():
         return
 
     if not resultado.get("sucesso"):
+        logger.warning(
+            "Melhores entradas: busca sem sucesso - %s",
+            resultado.get("mensagem", "sem mensagem"),
+        )
         return
 
     oportunidades = resultado.get("oportunidades", [])
 
     if not oportunidades:
+        logger.info(
+            "Melhores entradas: busca OK, mas 0 oportunidades "
+            "encontradas nos proximos jogos."
+        )
         return
 
     eh_pro = usuario_eh_pro()
