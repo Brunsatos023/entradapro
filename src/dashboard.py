@@ -69,6 +69,7 @@ from ui.melhores_entradas import renderizar_melhores_entradas
 from ui.alertas_risco import renderizar_alertas_risco
 from ui.corners_view import renderizar_secao_corners
 from ui.vitrine_campeonatos import renderizar_vitrine_campeonatos
+from ui.vitrine_publica import renderizar_vitrine_publica
 
 
 ARQUIVO_JSON = "brasileirao_serie_a_2024.json"
@@ -780,6 +781,11 @@ def main():
         "APOSTA NÃO É INVESTIMENTO | "
         "🔞 +18 | Jogue com responsabilidade"
     )
+
+    try:
+        renderizar_vitrine_publica()
+    except Exception as erro:
+        logger.exception("Erro em renderizar_vitrine_publica: %s", erro)
 
     try:
         partidas = carregar_dados()
