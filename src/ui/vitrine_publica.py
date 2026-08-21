@@ -13,6 +13,9 @@ página de Resultados, de forma transparente).
 import streamlit as st
 
 from engines.showcase_service import construir_vitrine_analises
+from ui.escudos_times import html_escudo
+from auth import usuario_esta_autenticado
+from favoritos_service import eh_favorito, alternar_favorito
 
 import logging
 logger = logging.getLogger("entradapro.dashboard")
@@ -46,41 +49,84 @@ def renderizar_vitrine_publica():
             "calculado e o resultado que realmente aconteceu."
         )
 
-        for analise in analises:
-            col_jogo, col_score, col_placar = st.columns([2.2, 1, 1])
+        st.write("")
 
-            with col_jogo:
-                st.markdown(
-                    f"**{analise['mandante']}** x "
-                    f"**{analise['visitante']}**"
-                )
-                st.caption(analise["data"])
+        usuario_logado = usuario_esta_autenticado()
+        usuario_id = (
+            st.session_state.usuario["id"]
+            if usuario_logado else None
+        )
 
-            with col_score:
-                st.markdown(
-                    f'<div style="text-align:center;">'
-                    f'<div style="font-size:9px;color:var(--text-muted);">'
-                    f'ENTRADAPRO SCORE</div>'
-                    f'<div style="font-family:\'JetBrains Mono\',monospace;'
-                    f'font-weight:600;font-size:18px;color:var(--green);">'
-                    f'{analise["entradapro_score"]}</div>'
-                    f'</div>',
-                    unsafe_allow_html=True
+        for indice, analise in enumerate(analises):
+            with st.container(border=True):
+                col_estrela, col_jogo, col_score, col_placar = (
+                    st.columns([0.4, 2.0, 1, 1])
                 )
 
-            with col_placar:
-                st.markdown(
-                    f'<div style="text-align:center;">'
-                    f'<div style="font-size:9px;color:var(--text-muted);">'
-                    f'PLACAR REAL</div>'
-                    f'<div style="font-family:\'JetBrains Mono\',monospace;'
-                    f'font-weight:600;font-size:16px;">'
-                    f'{analise["placar_real"]}</div>'
-                    f'</div>',
-                    unsafe_allow_html=True
-                )
+                with col_estrela:
+                    if usuario_logado:
+                        favorito_atual = eh_favorito(
+                            usuario_id, analise["mandante"]
+                        )
+                        icone = "⭐" if favorito_atual else "☆"
 
-            st.divider()
+                        if st.button(
+                            icone,
+                            key=f"fav_vitrine_{indice}",
+                        ):
+                            alternar_favorito(
+                                usuario_id, analise["mandante"]
+                            )
+                            st.rerun()
+                    else:
+                        st.markdown(
+                            '<span style="color:var(--text-muted);">'
+                            '☆</span>',
+                            unsafe_allow_html=True
+                        )
+
+                with col_jogo:
+                    st.markdown(
+                        f'<div style="display:flex;align-items:center;'
+                        f'gap:8px;">'
+                        f'{html_escudo(analise["mandante"])}'
+                        f'<span>{analise["mandante"]}</span>'
+                        f'<span style="color:var(--text-muted);">x</span>'
+                        f'{html_escudo(analise["visitante"])}'
+                        f'<span>{analise["visitante"]}</span>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
+                    st.caption(analise["data"])
+
+                with col_score:
+                    st.markdown(
+                        f'<div style="text-align:center;">'
+                        f'<div style="font-size:9px;'
+                        f'color:var(--text-muted);">'
+                        f'ENTRADAPRO SCORE</div>'
+                        f'<div style="font-family:\'JetBrains Mono\','
+                        f'monospace;font-weight:600;font-size:18px;'
+                        f'color:var(--green);">'
+                        f'{analise["entradapro_score"]}</div>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
+
+                with col_placar:
+                    st.markdown(
+                        f'<div style="text-align:center;">'
+                        f'<div style="font-size:9px;'
+                        f'color:var(--text-muted);">'
+                        f'PLACAR REAL</div>'
+                        f'<div style="font-family:\'JetBrains Mono\','
+                        f'monospace;font-weight:600;font-size:16px;">'
+                        f'{analise["placar_real"]}</div>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
+
+            st.write("")
 
         st.caption(
             "📊 Estes são exemplos ilustrativos da análise, não "

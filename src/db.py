@@ -374,6 +374,20 @@ def _inicializar_banco_sqlite():
             """
         )
 
+        # Times favoritos - usuario marca times para acompanhar
+        # mais de perto (destaque nas listas).
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS times_favoritos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario_id INTEGER NOT NULL,
+                nome_time TEXT NOT NULL,
+                criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE (usuario_id, nome_time)
+            )
+            """
+        )
+
         conexao.commit()
 
 
@@ -543,6 +557,18 @@ def _inicializar_banco_postgres():
                 valor REAL NOT NULL,
                 atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 motivo_ultima_atualizacao TEXT
+            )
+            """
+        )
+
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS times_favoritos (
+                id SERIAL PRIMARY KEY,
+                usuario_id INTEGER NOT NULL,
+                nome_time TEXT NOT NULL,
+                criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE (usuario_id, nome_time)
             )
             """
         )

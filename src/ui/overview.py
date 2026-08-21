@@ -375,33 +375,41 @@ def renderizar_overview(
     with st.container(
         border=True
     ):
-        if not usuario_eh_pro():
-            renderizar_bloqueio_pro(
-                titulo="Mercado +2,5 gols",
-                mensagem=(
-                    "Análise do mercado de mais de 2,5 gols "
-                    "disponível para assinantes PRO."
-                )
+        eh_pro_25 = usuario_eh_pro()
+
+        classe_borrado = "" if eh_pro_25 else "conteudo-borrado"
+
+        col1, col2 = st.columns(
+            [4, 1]
+        )
+
+        with col1:
+            st.markdown(
+                f'<div class="{classe_borrado}">'
+                f'<strong>Mais de 2,5 gols — {over25:.2f}%</strong>'
+                f'</div>',
+                unsafe_allow_html=True
             )
-        else:
-            col1, col2 = st.columns(
-                [4, 1]
+
+            st.markdown(
+                f'<div class="{classe_borrado}">',
+                unsafe_allow_html=True
+            )
+            _renderizar_barra(
+                over25
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown(
+                f'<div class="{classe_borrado}">'
+                f'<span style="color:var(--text-muted);font-size:13px;">'
+                f'{classificacao_over25} • {status_over25}</span>'
+                f'</div>',
+                unsafe_allow_html=True
             )
 
-            with col1:
-                st.markdown(
-                    f"**Mais de 2,5 gols — {over25:.2f}%**"
-                )
-
-                _renderizar_barra(
-                    over25
-                )
-
-                st.caption(
-                    f"{classificacao_over25} • {status_over25}"
-                )
-
-            with col2:
+        with col2:
+            if eh_pro_25:
                 _renderizar_status(
                     status_over25,
                     positivo=(
@@ -414,40 +422,68 @@ def renderizar_overview(
                     )
                 )
 
+        if not eh_pro_25:
+            st.markdown(
+                '<div style="text-align:center;margin-top:6px;">'
+                '<span style="background:rgba(217,163,83,.12);'
+                'border:1px solid rgba(217,163,83,.3);border-radius:8px;'
+                'padding:6px 14px;color:var(--green);font-size:12px;">'
+                '🔒 Desbloquear com PRO</span></div>',
+                unsafe_allow_html=True
+            )
+
     with st.container(
         border=True
     ):
-        if not usuario_eh_pro():
-            renderizar_bloqueio_pro(
-                titulo="Mercado Ambas Marcam",
-                mensagem=(
-                    "Análise do mercado Ambas Marcam "
-                    "disponível para assinantes PRO."
-                )
+        eh_pro_btts = usuario_eh_pro()
+
+        classe_borrado_btts = "" if eh_pro_btts else "conteudo-borrado"
+
+        col1, col2 = st.columns(
+            [4, 1]
+        )
+
+        with col1:
+            st.markdown(
+                f'<div class="{classe_borrado_btts}">'
+                f'<strong>Ambas marcam — {btts:.2f}%</strong>'
+                f'</div>',
+                unsafe_allow_html=True
             )
-        else:
-            col1, col2 = st.columns(
-                [4, 1]
+
+            st.markdown(
+                f'<div class="{classe_borrado_btts}">',
+                unsafe_allow_html=True
+            )
+            _renderizar_barra(
+                btts
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown(
+                f'<div class="{classe_borrado_btts}">'
+                f'<span style="color:var(--text-muted);font-size:13px;">'
+                f'{classificacao_btts} • {status_btts}</span>'
+                f'</div>',
+                unsafe_allow_html=True
             )
 
-            with col1:
-                st.markdown(
-                    f"**Ambas marcam — {btts:.2f}%**"
-                )
-
-                _renderizar_barra(
-                    btts
-                )
-
-                st.caption(
-                    f"{classificacao_btts} • {status_btts}"
-                )
-
-            with col2:
+        with col2:
+            if eh_pro_btts:
                 _renderizar_status(
                     status_btts,
                     positivo=False
                 )
+
+        if not eh_pro_btts:
+            st.markdown(
+                '<div style="text-align:center;margin-top:6px;">'
+                '<span style="background:rgba(217,163,83,.12);'
+                'border:1px solid rgba(217,163,83,.3);border-radius:8px;'
+                'padding:6px 14px;color:var(--green);font-size:12px;">'
+                '🔒 Desbloquear com PRO</span></div>',
+                unsafe_allow_html=True
+            )
 
     st.caption(
         "⚠️ Análise estatística baseada em dados históricos, não "

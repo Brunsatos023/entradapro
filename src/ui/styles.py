@@ -100,6 +100,45 @@ def aplicar_estilos():
             border-radius: 2px;
         }
 
+        /* Badges de credibilidade, logo abaixo do hero */
+        .badges-credibilidade {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 10px 0 18px 0;
+        }
+
+        .badge-credibilidade {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        /* Escudo circular com iniciais do time (ate termos
+           logos reais via API) */
+        .escudo-time {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Efeito de desfoque no conteudo bloqueado PRO -
+           mais convidativo que so um cadeado seco */
+        .conteudo-borrado {
+            filter: blur(5px);
+            user-select: none;
+            pointer-events: none;
+        }
+
         /* Campos de login/cadastro arredondados (estilo "pill"),
            igual referencia visual aprovada */
         div[data-testid="stForm"] input[type="text"],

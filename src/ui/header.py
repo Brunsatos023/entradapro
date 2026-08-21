@@ -31,6 +31,15 @@ def renderizar_cabecalho(total_partidas_base=None):
         unsafe_allow_html=True
     )
 
+    st.markdown(
+        '<div class="badges-credibilidade">'
+        '<span class="badge-credibilidade">📊 380 partidas analisadas</span>'
+        '<span class="badge-credibilidade">🧠 5 motores de IA</span>'
+        '<span class="badge-credibilidade">🔍 100% transparente</span>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
 
 def renderizar_partida(
     nome_mandante,
