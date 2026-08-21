@@ -166,7 +166,22 @@ def renderizar_overview(
         )
 
         st.markdown(
-            f"## ⚽ {nome_mandante} × {nome_visitante}"
+            f'<div style="text-align:center;display:flex;'
+            f'align-items:center;justify-content:center;gap:20px;'
+            f'padding:6px 0;">'
+            f'<div style="text-align:center;">'
+            f'{html_escudo(nome_mandante, tamanho=46)}'
+            f'<div style="color:var(--text-primary);font-size:13px;'
+            f'margin-top:6px;">{nome_mandante}</div>'
+            f'</div>'
+            f'<span style="color:var(--text-muted);font-size:15px;">vs</span>'
+            f'<div style="text-align:center;">'
+            f'{html_escudo(nome_visitante, tamanho=46)}'
+            f'<div style="color:var(--text-primary);font-size:13px;'
+            f'margin-top:6px;">{nome_visitante}</div>'
+            f'</div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
 
         col1, col2, col3 = st.columns(3)
@@ -258,15 +273,17 @@ def renderizar_overview(
                 )
 
                 st.markdown(
-                    f"### {probabilidade_mercado:.2f}%"
-                )
-
-                _renderizar_barra(
-                    probabilidade_mercado
-                )
-
-                st.success(
-                    status_mercado
+                    f'<div style="display:flex;align-items:center;'
+                    f'gap:10px;margin-top:4px;">'
+                    f'<span style="color:var(--green);font-size:24px;'
+                    f'font-weight:700;">{probabilidade_mercado:.2f}%'
+                    f'</span>'
+                    f'<span style="background:rgba(20,232,158,.14);'
+                    f'color:var(--green);font-size:12px;'
+                    f'padding:4px 12px;border-radius:6px;">'
+                    f'{status_mercado}</span>'
+                    f'</div>',
+                    unsafe_allow_html=True
                 )
                 st.markdown('</div>', unsafe_allow_html=True)
 
