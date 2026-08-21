@@ -846,8 +846,8 @@ def _renderizar_cabecalho_auth():
         """
         <div style="
             text-align:center;
-            margin-top:25px;
-            margin-bottom:28px;
+            margin-top:15px;
+            margin-bottom:20px;
         ">
             <div style="
                 font-size:38px;
@@ -855,15 +855,16 @@ def _renderizar_cabecalho_auth():
                 color:#ffffff;
                 line-height:1;
             ">
-                Entrada<span style="color:#53d99f;">Pro</span>
+                Entrada<span style="color:#d9a353;">Pro</span>
             </div>
 
             <div style="
-                margin-top:10px;
-                color:#91a4b8;
-                font-size:14px;
+                margin-top:6px;
+                color:#8fa89a;
+                font-size:12px;
+                letter-spacing:0.1em;
             ">
-                Football Intelligence
+                FOOTBALL INTELLIGENCE
             </div>
         </div>
         """
@@ -873,21 +874,7 @@ def _renderizar_cabecalho_auth():
 def _renderizar_login():
     st.markdown(
         """
-        <div style="text-align:center;margin-bottom:4px;">
-            <div class="marca-lateral" style="justify-content:center;
-                display:inline-flex;">
-                <div class="marca-lateral-selo">EP</div>
-                <div style="text-align:left;">
-                    <div class="marca-lateral-nome">
-                        ENTRADA<span>PRO</span>
-                    </div>
-                    <div class="marca-lateral-tagline">
-                        FOOTBALL INTELLIGENCE
-                    </div>
-                </div>
-            </div>
-        </div>
-        <h2 style="text-align:center;margin:14px 0 2px 0;">
+        <h2 style="text-align:center;margin:0 0 2px 0;">
             Bem-vindo(a)
         </h2>
         <p style="text-align:center;color:var(--text-muted);
@@ -916,8 +903,7 @@ def _renderizar_login():
 
         enviar = st.form_submit_button(
             "Acessar",
-            use_container_width=True,
-            type="primary"
+            use_container_width=True
         )
 
     if enviar:
@@ -1005,21 +991,7 @@ def _renderizar_login():
 def _renderizar_cadastro():
     st.markdown(
         """
-        <div style="text-align:center;margin-bottom:4px;">
-            <div class="marca-lateral" style="justify-content:center;
-                display:inline-flex;">
-                <div class="marca-lateral-selo">EP</div>
-                <div style="text-align:left;">
-                    <div class="marca-lateral-nome">
-                        ENTRADA<span>PRO</span>
-                    </div>
-                    <div class="marca-lateral-tagline">
-                        FOOTBALL INTELLIGENCE
-                    </div>
-                </div>
-            </div>
-        </div>
-        <h2 style="text-align:center;margin:14px 0 2px 0;">
+        <h2 style="text-align:center;margin:0 0 2px 0;">
             Criar conta
         </h2>
         <p style="text-align:center;color:var(--text-muted);

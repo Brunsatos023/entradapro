@@ -478,7 +478,8 @@ def aplicar_estilos():
            BOTÕES
            ========================================================== */
 
-        div.stButton > button {
+        div.stButton > button,
+        div.stFormSubmitButton > button {
             width: 100%;
 
             min-height: 44px;
@@ -511,7 +512,8 @@ def aplicar_estilos():
         }
 
 
-        div.stButton > button:hover {
+        div.stButton > button:hover,
+        div.stFormSubmitButton > button:hover {
             color:
                 #041711;
 
