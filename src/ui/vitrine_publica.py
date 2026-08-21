@@ -27,8 +27,8 @@ def _renderizar_linha_jogo(analise, indice, usuario_logado, usuario_id):
     if usuario_logado:
         from favoritos_service import eh_favorito, alternar_favorito
 
-        col_estrela, col_jogo, col_data, col_score = st.columns(
-            [0.35, 2.4, 0.9, 0.6]
+        col_estrela, col_hora, col_jogo, col_data, col_score = (
+            st.columns([0.35, 0.55, 2.1, 0.75, 0.6])
         )
 
         with col_estrela:
@@ -39,8 +39,8 @@ def _renderizar_linha_jogo(analise, indice, usuario_logado, usuario_id):
                 alternar_favorito(usuario_id, analise["mandante"])
                 st.rerun()
     else:
-        col_estrela, col_jogo, col_data, col_score = st.columns(
-            [0.35, 2.4, 0.9, 0.6]
+        col_estrela, col_hora, col_jogo, col_data, col_score = (
+            st.columns([0.35, 0.55, 2.1, 0.75, 0.6])
         )
 
         with col_estrela:
@@ -48,6 +48,14 @@ def _renderizar_linha_jogo(analise, indice, usuario_logado, usuario_id):
                 '<span style="color:var(--text-muted);">☆</span>',
                 unsafe_allow_html=True
             )
+
+    with col_hora:
+        st.markdown(
+            f'<div style="padding-top:8px;color:var(--text-primary);'
+            f'font-size:12px;font-weight:600;">'
+            f'{analise.get("hora", "")}</div>',
+            unsafe_allow_html=True
+        )
 
     with col_jogo:
         st.markdown(

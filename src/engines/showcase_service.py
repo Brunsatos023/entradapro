@@ -11,6 +11,8 @@ local já carregado - sem custo, sem chamada externa, sem risco de
 ficar vazia.
 """
 
+from datetime import datetime, timedelta
+
 from data_storage import carregar_json
 from engines.match_analysis_engine import MatchAnalysisEngine
 
@@ -22,6 +24,24 @@ TIMES_RECONHECIVEIS = {
 }
 
 ODD_ILUSTRATIVA = 1.85  # media de mercado tipica, so para fins de exibicao
+
+
+def _formatar_data_e_hora_brasilia(data_iso):
+    """
+    Converte a data/hora ISO (UTC, como vem da API-Football) para
+    o horário de Brasília (UTC-3), separando data e hora.
+    """
+    try:
+        momento_utc = datetime.fromisoformat(
+            data_iso.replace("Z", "+00:00")
+        )
+        momento_brasilia = momento_utc - timedelta(hours=3)
+        return (
+            momento_brasilia.strftime("%Y-%m-%d"),
+            momento_brasilia.strftime("%H:%M"),
+        )
+    except (ValueError, AttributeError):
+        return (data_iso[:10] if data_iso else "", "")
 
 
 def _construir_indices_times(partidas):
@@ -100,8 +120,13 @@ def construir_vitrine_analises(
             "resultado_prediction", {}
         ).get("mais_15", 0)
 
+        data_formatada, hora_formatada = _formatar_data_e_hora_brasilia(
+            partida["fixture"]["date"]
+        )
+
         analises.append({
-            "data": partida["fixture"]["date"][:10],
+            "data": data_formatada,
+            "hora": hora_formatada,
             "mandante": nome_casa,
             "visitante": nome_fora,
             "entradapro_score": entradapro_score,

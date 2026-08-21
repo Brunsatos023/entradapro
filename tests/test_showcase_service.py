@@ -25,7 +25,7 @@ class TestConstruirVitrineAnalises(unittest.TestCase):
         analise = resultado["analises"][0]
 
         for campo in (
-            "data", "mandante", "visitante", "entradapro_score",
+            "data", "hora", "mandante", "visitante", "entradapro_score",
             "probabilidade_over15", "placar_real",
         ):
             self.assertIn(campo, analise)
@@ -54,6 +54,11 @@ class TestConstruirVitrineAnalises(unittest.TestCase):
             construir_vitrine_analises(
                 nome_arquivo_dataset="isso_nao_existe.json"
             )
+
+    def test_hora_esta_no_formato_hh_mm(self):
+        resultado = construir_vitrine_analises(quantidade=5)
+        for analise in resultado["analises"]:
+            self.assertRegex(analise["hora"], r"^\d{2}:\d{2}$")
 
 
 if __name__ == "__main__":
