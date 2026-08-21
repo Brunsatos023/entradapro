@@ -67,4 +67,10 @@ def renderizar_navegacao_lateral(usuario_logado, usuario_id):
         unsafe_allow_html=True
     )
 
+    try:
+        from ui.tabela_classificacao import renderizar_tabela_classificacao
+        renderizar_tabela_classificacao()
+    except Exception as erro:
+        logger.exception("Erro ao renderizar tabela de classificacao: %s", erro)
+
     st.divider()

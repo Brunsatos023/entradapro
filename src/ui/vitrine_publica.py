@@ -10,6 +10,8 @@ nomes, data, Score) em vez de cards grandes separados. Clicar em
 "Analisar" abre a análise completa da partida.
 """
 
+from datetime import date, timedelta
+
 import streamlit as st
 
 from engines.showcase_service import construir_vitrine_analises
@@ -17,6 +19,58 @@ from ui.escudos_times import html_escudo
 
 import logging
 logger = logging.getLogger("entradapro.dashboard")
+
+
+DIAS_SEMANA_ABREVIADO = [
+    "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom",
+]
+
+
+def _renderizar_faixa_de_dias():
+    """
+    Faixa de dias da semana (visual, estilo Forebet/R10) - só
+    "Hoje" mostra conteúdo de verdade (os Destaques já
+    calculados); os outros dias ficam desativados até termos
+    acesso a jogos da temporada atual via API.
+    """
+    hoje = date.today()
+    dias = [hoje + timedelta(days=delta) for delta in range(-2, 3)]
+
+    colunas = st.columns(len(dias))
+
+    for coluna, dia in zip(colunas, dias):
+        eh_hoje = dia == hoje
+        rotulo = "Hoje" if eh_hoje else DIAS_SEMANA_ABREVIADO[dia.weekday()]
+
+        with coluna:
+            if eh_hoje:
+                st.markdown(
+                    f'<div style="text-align:center;background:'
+                    f'var(--bg-card);border:1px solid var(--green);'
+                    f'border-radius:8px;padding:6px 2px;">'
+                    f'<div style="color:var(--green);font-size:11px;'
+                    f'font-weight:700;">{rotulo}</div>'
+                    f'<div style="color:var(--green);font-size:9px;">'
+                    f'{dia.day:02d}/{dia.month:02d}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+            else:
+                st.markdown(
+                    f'<div style="text-align:center;padding:6px 2px;'
+                    f'opacity:0.4;">'
+                    f'<div style="color:var(--text-muted);font-size:11px;'
+                    f'font-weight:600;">{rotulo}</div>'
+                    f'<div style="color:var(--text-muted);font-size:9px;">'
+                    f'{dia.day:02d}/{dia.month:02d}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+
+    st.caption(
+        "📅 Navegação por dia chega com a temporada atual "
+        "(ainda dependente de upgrade da API)."
+    )
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -143,6 +197,8 @@ def renderizar_vitrine_publica(callback_selecao):
         )
 
         with aba_destaques:
+            _renderizar_faixa_de_dias()
+
             st.markdown(
                 '<div style="color:var(--text-muted);font-size:11px;'
                 'font-weight:600;margin-bottom:8px;">'
