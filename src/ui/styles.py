@@ -100,6 +100,28 @@ def aplicar_estilos():
             border-radius: 2px;
         }
 
+        /* Campos de login/cadastro arredondados (estilo "pill"),
+           igual referencia visual aprovada */
+        div[data-testid="stForm"] input[type="text"],
+        div[data-testid="stForm"] input[type="password"] {
+            border-radius: 24px !important;
+            padding-left: 18px !important;
+            height: 44px;
+        }
+
+        /* Botao "G" do login com Google - formato circular,
+           escopado so a esses dois containers especificos para
+           nao afetar nenhum outro botao do site. */
+        .st-key-badge_google_login button,
+        .st-key-badge_google_cadastro button {
+            border-radius: 50% !important;
+            width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+            font-weight: 700;
+            margin: 0 auto;
+        }
+
         </style>
         """,
         unsafe_allow_html=True

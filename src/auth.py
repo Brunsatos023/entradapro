@@ -872,46 +872,52 @@ def _renderizar_cabecalho_auth():
 
 def _renderizar_login():
     st.markdown(
-        "### Entrar"
+        """
+        <div style="text-align:center;margin-bottom:4px;">
+            <div class="marca-lateral" style="justify-content:center;
+                display:inline-flex;">
+                <div class="marca-lateral-selo">EP</div>
+                <div style="text-align:left;">
+                    <div class="marca-lateral-nome">
+                        ENTRADA<span>PRO</span>
+                    </div>
+                    <div class="marca-lateral-tagline">
+                        FOOTBALL INTELLIGENCE
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2 style="text-align:center;margin:14px 0 2px 0;">
+            Bem-vindo(a)
+        </h2>
+        <p style="text-align:center;color:var(--text-muted);
+            font-size:13px;margin-bottom:18px;">
+            Faça login ou cadastre-se para entrar no EntradaPro
+        </p>
+        """,
+        unsafe_allow_html=True
     )
-
-    st.caption(
-        "Acesse sua conta para continuar."
-    )
-
-    from streamlit_secrets_bootstrap import google_login_configurado
-
-    if google_login_configurado():
-        st.caption("Ou entre com:")
-
-        col_google, _ = st.columns([1, 3])
-
-        with col_google:
-            if st.button(
-                "🔵 Google",
-                key="botao_login_google"
-            ):
-                st.login()
-
-        st.divider()
 
     with st.form(
         "form_login"
     ):
         nome_usuario = st.text_input(
             "Usuário",
-            placeholder="Seu nome de usuário"
+            placeholder="👤 Seu nome de usuário",
+            label_visibility="collapsed"
         )
 
         senha = st.text_input(
             "Senha",
             type="password",
-            placeholder="Sua senha"
+            placeholder="🔒 Sua senha",
+            label_visibility="collapsed"
         )
 
         enviar = st.form_submit_button(
-            "Entrar",
-            use_container_width=True
+            "Acessar",
+            use_container_width=True,
+            type="primary"
         )
 
     if enviar:
@@ -947,21 +953,46 @@ def _renderizar_login():
 
             st.rerun()
 
-    if st.button(
-        "Esqueci minha senha?",
-        use_container_width=True,
-        key="abrir_recuperacao_senha"
-    ):
-        st.session_state.tela_auth = (
-            "esqueci_senha"
+    col_esqueci, _ = st.columns([1, 1])
+    with col_esqueci:
+        if st.button(
+            "Esqueceu sua senha?",
+            key="abrir_recuperacao_senha"
+        ):
+            st.session_state.tela_auth = (
+                "esqueci_senha"
+            )
+
+            st.rerun()
+
+    from streamlit_secrets_bootstrap import google_login_configurado
+
+    if google_login_configurado():
+        st.markdown(
+            '<p style="text-align:center;color:var(--text-muted);'
+            'font-size:12px;margin:14px 0 8px 0;">Ou faça login com:</p>',
+            unsafe_allow_html=True
         )
 
-        st.rerun()
+        col_esq, col_google, col_dir = st.columns([1, 1, 1])
 
-    st.divider()
+        with col_google:
+            with st.container(key="badge_google_login"):
+                if st.button(
+                    "G",
+                    key="botao_login_google",
+                    use_container_width=True
+                ):
+                    st.login()
+
+    st.markdown(
+        '<p style="text-align:center;font-size:13px;margin-top:16px;">'
+        'Ainda não tem uma conta?</p>',
+        unsafe_allow_html=True
+    )
 
     if st.button(
-        "Criar conta",
+        "Cadastre-se aqui",
         use_container_width=True,
         key="abrir_cadastro"
     ):
@@ -973,26 +1004,51 @@ def _renderizar_login():
 
 def _renderizar_cadastro():
     st.markdown(
-        "### Criar conta"
-    )
-
-    st.caption(
-        "Cadastre-se para acessar o EntradaPro."
+        """
+        <div style="text-align:center;margin-bottom:4px;">
+            <div class="marca-lateral" style="justify-content:center;
+                display:inline-flex;">
+                <div class="marca-lateral-selo">EP</div>
+                <div style="text-align:left;">
+                    <div class="marca-lateral-nome">
+                        ENTRADA<span>PRO</span>
+                    </div>
+                    <div class="marca-lateral-tagline">
+                        FOOTBALL INTELLIGENCE
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2 style="text-align:center;margin:14px 0 2px 0;">
+            Criar conta
+        </h2>
+        <p style="text-align:center;color:var(--text-muted);
+            font-size:13px;margin-bottom:18px;">
+            Cadastre-se para acessar o EntradaPro
+        </p>
+        """,
+        unsafe_allow_html=True
     )
 
     from streamlit_secrets_bootstrap import google_login_configurado
 
     if google_login_configurado():
-        st.caption("Ou cadastre-se com:")
+        st.markdown(
+            '<p style="text-align:center;color:var(--text-muted);'
+            'font-size:12px;margin-bottom:8px;">Ou cadastre-se com:</p>',
+            unsafe_allow_html=True
+        )
 
-        col_google, _ = st.columns([1, 3])
+        col_esq, col_google, col_dir = st.columns([1, 1, 1])
 
         with col_google:
-            if st.button(
-                "🔵 Google",
-                key="botao_cadastro_google"
-            ):
-                st.login()
+            with st.container(key="badge_google_cadastro"):
+                if st.button(
+                    "G",
+                    key="botao_cadastro_google",
+                    use_container_width=True
+                ):
+                    st.login()
 
         st.divider()
 
