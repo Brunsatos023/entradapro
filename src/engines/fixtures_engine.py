@@ -24,6 +24,8 @@ from datetime import datetime, timedelta
 
 import requests
 
+import logging
+logger = logging.getLogger("entradapro.dashboard")
 
 BASE_URL = "https://v3.football.api-sports.io"
 
@@ -90,6 +92,12 @@ def buscar_liga_por_nome(
     dados = resposta.json()
     ligas = dados.get("response", [])
 
+    logger.info(
+        "buscar_liga_por_nome('%s', pais=%s): API retornou %d "
+        "liga(s) na busca bruta.",
+        nome_liga, pais, len(ligas),
+    )
+
     liga_encontrada = None
     for item in ligas:
         nome_encontrado = item.get("league", {}).get("name", "")
@@ -103,6 +111,12 @@ def buscar_liga_por_nome(
             break
 
     if not liga_encontrada:
+        logger.warning(
+            "buscar_liga_por_nome: nenhuma liga bateu com '%s' "
+            "(tipo esperado: %s). Nomes recebidos: %s",
+            nome_liga, tipo_esperado,
+            [i.get("league", {}).get("name") for i in ligas],
+        )
         return {
             "sucesso": False,
             "mensagem": (
@@ -121,6 +135,16 @@ def buscar_liga_por_nome(
 
     if temporada_atual is None:
         temporada_atual = datetime.now().year
+
+    logger.info(
+        "buscar_liga_por_nome: encontrada '%s' (liga_id=%s, "
+        "temporada=%s). Temporadas disponiveis na API: %s",
+        liga_encontrada["league"]["name"], liga_id, temporada_atual,
+        [
+            (t.get("year"), t.get("current"))
+            for t in liga_encontrada.get("seasons", [])
+        ],
+    )
 
     resultado = {
         "sucesso": True,
@@ -308,16 +332,23 @@ def buscar_jogos_futuros(dias_a_frente=7):
     hoje = datetime.now().date()
     ate = hoje + timedelta(days=dias_a_frente)
 
+    parametros_busca = {
+        "league": liga["liga_id"],
+        "season": liga["temporada"],
+        "from": hoje.isoformat(),
+        "to": ate.isoformat(),
+    }
+
+    logger.info(
+        "buscar_jogos_futuros: consultando /fixtures com params=%s",
+        parametros_busca,
+    )
+
     try:
         resposta = requests.get(
             f"{BASE_URL}/fixtures",
             headers=_cabecalhos(),
-            params={
-                "league": liga["liga_id"],
-                "season": liga["temporada"],
-                "from": hoje.isoformat(),
-                "to": ate.isoformat(),
-            },
+            params=parametros_busca,
             timeout=20,
         )
     except requests.RequestException as erro:
@@ -336,6 +367,14 @@ def buscar_jogos_futuros(dias_a_frente=7):
         }
 
     dados = resposta.json()
+
+    logger.info(
+        "buscar_jogos_futuros: resposta bruta da API - "
+        "results=%s, errors=%s, response_len=%d",
+        dados.get("results"), dados.get("errors"),
+        len(dados.get("response", [])),
+    )
+
     itens = dados.get("response", [])
 
     jogos = [_formatar_jogo(item) for item in itens]
