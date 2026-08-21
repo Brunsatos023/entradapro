@@ -68,7 +68,6 @@ from ui.lista_principal import renderizar_lista_principal
 from ui.melhores_entradas import renderizar_melhores_entradas
 from ui.alertas_risco import renderizar_alertas_risco
 from ui.corners_view import renderizar_secao_corners
-from ui.vitrine_campeonatos import renderizar_vitrine_campeonatos
 from ui.vitrine_publica import renderizar_vitrine_publica
 
 
@@ -860,13 +859,6 @@ def main():
         except Exception as erro:
             logger.exception(
                 "Erro em renderizar_melhores_entradas: %s", erro
-            )
-
-        try:
-            renderizar_vitrine_campeonatos()
-        except Exception as erro:
-            logger.exception(
-                "Erro em renderizar_vitrine_campeonatos: %s", erro
             )
 
         def _selecionar_jogo_da_lista(mandante, visitante):
