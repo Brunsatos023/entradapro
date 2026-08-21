@@ -1242,18 +1242,51 @@ def renderizar_usuario_sidebar():
     if not usuario:
         return
 
+    eh_pro = str(usuario.get("plano", "")).strip().upper() == "PRO"
+
+    iniciais = "".join(
+        parte[0].upper() for parte in usuario["nome"].split()[:2]
+    ) or "U"
+
     with st.sidebar:
         with st.container(border=True):
-            st.markdown(f"**{usuario['nome']}**")
-
-            st.caption(
-                f"@{usuario['usuario']} · {usuario['email']}"
+            st.markdown(
+                f'''
+                <div style="display:flex;align-items:center;gap:10px;
+                    margin-bottom:8px;">
+                    <div style="width:38px;height:38px;border-radius:50%;
+                        background:var(--bg-card);border:1.5px solid
+                        var(--green);display:flex;align-items:center;
+                        justify-content:center;font-family:'Oswald',
+                        sans-serif;color:var(--green);font-size:14px;
+                        font-weight:700;flex-shrink:0;">{iniciais}</div>
+                    <div style="min-width:0;">
+                        <div style="color:var(--text-primary);
+                            font-size:14px;font-weight:600;
+                            white-space:nowrap;overflow:hidden;
+                            text-overflow:ellipsis;">
+                            {usuario['nome']}</div>
+                        <div style="color:var(--text-muted);
+                            font-size:11px;white-space:nowrap;
+                            overflow:hidden;text-overflow:ellipsis;">
+                            @{usuario['usuario']}</div>
+                    </div>
+                </div>
+                <div style="display:inline-block;
+                    background:{
+                        'rgba(20,232,158,.15)' if eh_pro
+                        else 'var(--bg-card)'
+                    };
+                    color:{'var(--green)' if eh_pro else
+                        'var(--text-muted)'};
+                    font-size:11px;font-weight:700;
+                    padding:3px 10px;border-radius:12px;
+                    margin-bottom:10px;">
+                    {'⭐ PLANO PRO' if eh_pro else 'PLANO FREE'}
+                </div>
+                ''',
+                unsafe_allow_html=True
             )
-
-            if str(usuario.get("plano", "")).strip().upper() == "PRO":
-                st.success("⭐ Plano PRO", icon="⭐")
-            else:
-                st.caption("Plano FREE")
 
             coluna_conta, coluna_sair = st.columns(2)
 

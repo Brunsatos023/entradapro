@@ -54,9 +54,14 @@ def renderizar_navegacao_lateral(usuario_logado, usuario_id):
     st.markdown(
         '<div style="color:var(--text-muted);font-size:10px;'
         'letter-spacing:.05em;margin-bottom:6px;">LIGAS</div>'
-        '<div style="color:var(--green);font-size:12px;padding:5px 4px;'
+        '<div style="display:flex;align-items:center;gap:6px;'
+        'color:var(--green);font-size:12px;padding:5px 4px;'
         'background:var(--bg-card);border-radius:6px;'
-        'margin-bottom:2px;">🇧🇷 Brasileirão Série A</div>'
+        'margin-bottom:2px;">'
+        '<img src="https://media.api-sports.io/football/leagues/71.png" '
+        'style="width:18px;height:18px;object-fit:contain;" '
+        'onerror="this.style.display=\'none\';" />'
+        'Brasileirão Série A</div>'
         '<div style="color:var(--text-muted);font-size:12px;'
         'padding:5px 4px;">🌍 Outras (em breve)</div>',
         unsafe_allow_html=True

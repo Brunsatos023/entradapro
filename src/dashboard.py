@@ -234,6 +234,61 @@ def obter_time_padrao(
     ]
 
 
+def renderizar_odds_da_partida(nome_mandante, nome_visitante):
+    """
+    Campos de odd contextuais à partida sendo analisada agora -
+    diferente de antes (ficavam soltos na barra lateral, sem
+    relação clara com qual jogo). Aparecem só aqui, dentro da
+    própria análise.
+    """
+    with st.container(border=True):
+        st.markdown(
+            f"##### 💰 Odds de {nome_mandante} x {nome_visitante}"
+        )
+
+        st.caption(
+            "Confira a odd atual no seu site de apostas preferido "
+            "e informe abaixo para calcular o Value desta partida."
+        )
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            odd_over15 = st.number_input(
+                "Odd — Mais de 1,5 gols",
+                min_value=1.01,
+                max_value=20.00,
+                value=1.40,
+                step=0.01,
+                format="%.2f",
+                key="odd_over15"
+            )
+
+        with col2:
+            odd_over25 = st.number_input(
+                "Odd — Mais de 2,5 gols",
+                min_value=1.01,
+                max_value=20.00,
+                value=2.10,
+                step=0.01,
+                format="%.2f",
+                key="odd_over25"
+            )
+
+        with col3:
+            odd_btts = st.number_input(
+                "Odd — Ambas marcam",
+                min_value=1.01,
+                max_value=20.00,
+                value=1.70,
+                step=0.01,
+                format="%.2f",
+                key="odd_btts"
+            )
+
+    return odd_over15, odd_over25, odd_btts
+
+
 def renderizar_configuracoes_laterais():
     autenticado = usuario_esta_autenticado()
 
@@ -279,106 +334,6 @@ def renderizar_configuracoes_laterais():
             )
 
         st.divider()
-
-        st.markdown(
-            "### Odds de mercado"
-        )
-
-        st.caption(
-            "Confira a odd atual no seu site de apostas "
-            "preferido e informe abaixo para calcular o Value."
-        )
-
-        if autenticado:
-            odd_over15 = st.number_input(
-                "Odd — Mais de 1,5 gols",
-                min_value=1.01,
-                max_value=20.00,
-                value=1.40,
-                step=0.01,
-                format="%.2f",
-                key="odd_over15"
-            )
-
-            odd_over25 = st.number_input(
-                "Odd — Mais de 2,5 gols",
-                min_value=1.01,
-                max_value=20.00,
-                value=2.10,
-                step=0.01,
-                format="%.2f",
-                key="odd_over25"
-            )
-
-            odd_btts = st.number_input(
-                "Odd — Ambas marcam",
-                min_value=1.01,
-                max_value=20.00,
-                value=1.70,
-                step=0.01,
-                format="%.2f",
-                key="odd_btts"
-            )
-
-        else:
-            st.number_input(
-                "Odd — Mais de 1,5 gols",
-                min_value=1.01,
-                max_value=20.00,
-                value=1.40,
-                step=0.01,
-                format="%.2f",
-                disabled=True,
-                key="odd_over15_visitante"
-            )
-
-            st.number_input(
-                "Odd — Mais de 2,5 gols",
-                min_value=1.01,
-                max_value=20.00,
-                value=2.10,
-                step=0.01,
-                format="%.2f",
-                disabled=True,
-                key="odd_over25_visitante"
-            )
-
-            st.number_input(
-                "Odd — Ambas marcam",
-                min_value=1.01,
-                max_value=20.00,
-                value=1.70,
-                step=0.01,
-                format="%.2f",
-                disabled=True,
-                key="odd_btts_visitante"
-            )
-
-            if st.button(
-                "🔒 Entrar para ajustar odds",
-                use_container_width=True,
-                key="login_odds_visitante"
-            ):
-                abrir_autenticacao("login")
-                st.rerun()
-
-            odd_over15 = 1.40
-            odd_over25 = 2.10
-            odd_btts = 1.70
-
-        st.divider()
-
-        st.caption(
-            "As odds são usadas pelo ValueEngine "
-            "para comparar o preço de mercado com "
-            "a probabilidade calculada."
-        )
-
-    return {
-        "odd_over15": odd_over15,
-        "odd_over25": odd_over25,
-        "odd_btts": odd_btts
-    }
 
 
 def atualizar_partida_ativa(
@@ -853,9 +808,7 @@ def main():
     # aparece quando o usuário clica em "Destaques" ou busca
     # manualmente em "Selecionar partida".
 
-    configuracao_lateral = (
-        renderizar_configuracoes_laterais()
-    )
+    renderizar_configuracoes_laterais()
 
     if usuario_esta_autenticado():
         try:
@@ -1002,17 +955,9 @@ def main():
 
         st.stop()
 
-    odd_over15 = configuracao_lateral[
-        "odd_over15"
-    ]
-
-    odd_over25 = configuracao_lateral.get(
-        "odd_over25"
+    odd_over15, odd_over25, odd_btts = renderizar_odds_da_partida(
+        nome_mandante, nome_visitante
     )
-
-    odd_btts = configuracao_lateral[
-        "odd_btts"
-    ]
 
     id_mandante = times[
         nome_mandante
