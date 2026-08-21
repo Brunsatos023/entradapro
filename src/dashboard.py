@@ -69,6 +69,7 @@ from ui.melhores_entradas import renderizar_melhores_entradas
 from ui.alertas_risco import renderizar_alertas_risco
 from ui.corners_view import renderizar_secao_corners
 from ui.vitrine_publica import renderizar_vitrine_publica
+from ui.navegacao_lateral import renderizar_navegacao_lateral
 
 
 ARQUIVO_JSON = "brasileirao_serie_a_2024.json"
@@ -259,6 +260,14 @@ def renderizar_configuracoes_laterais():
             "Análise inteligente de partidas "
             "e identificação de apostas de valor."
         )
+
+        try:
+            usuario_id_atual = (
+                st.session_state.usuario["id"] if autenticado else None
+            )
+            renderizar_navegacao_lateral(autenticado, usuario_id_atual)
+        except Exception:
+            pass
 
         if autenticado:
             renderizar_usuario_sidebar()
