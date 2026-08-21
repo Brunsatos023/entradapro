@@ -161,7 +161,8 @@ def aplicar_estilos():
             height: 44px;
         }
 
-        /* Botao "G" do login com Google - formato circular,
+        /* Botao do login com Google - formato circular, com o
+           icone real do Google (nao mais a letra "G" em texto),
            escopado so a esses dois containers especificos para
            nao afetar nenhum outro botao do site. */
         .st-key-badge_google_login button,
@@ -170,8 +171,31 @@ def aplicar_estilos():
             width: 44px !important;
             height: 44px !important;
             padding: 0 !important;
-            font-weight: 700;
             margin: 0 auto;
+            background-color: #ffffff !important;
+            background-image: url(
+                'https://developers.google.com/identity/images/g-logo.png'
+            ) !important;
+            background-size: 22px 22px !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            color: transparent !important;
+            font-size: 0 !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+        }
+
+        /* Mantem o botao do Google branco tambem no hover -
+           nao deve pintar de verde como os demais botoes */
+        .st-key-badge_google_login button:hover,
+        .st-key-badge_google_cadastro button:hover {
+            background-color: #f7f7f7 !important;
+            background-image: url(
+                'https://developers.google.com/identity/images/g-logo.png'
+            ) !important;
+            background-size: 22px 22px !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            border: 1px solid rgba(0, 0, 0, 0.2) !important;
         }
 
         </style>

@@ -6,7 +6,8 @@ e sempre mostra dado real.
 
 Organizada em abas (Destaques / Ao vivo / Meus times), estilo
 Forebet/R10 Score, com jogos em linhas densas (estrela, escudo,
-nomes, data, Score) em vez de cards grandes separados.
+nomes, data, Score) em vez de cards grandes separados. Clicar em
+"Analisar" abre a análise completa da partida.
 """
 
 import streamlit as st
@@ -23,12 +24,14 @@ def _construir_vitrine_com_cache(quantidade):
     return construir_vitrine_analises(quantidade=quantidade)
 
 
-def _renderizar_linha_jogo(analise, indice, usuario_logado, usuario_id):
+def _renderizar_linha_jogo(
+    analise, indice, usuario_logado, usuario_id, callback_selecao
+):
     if usuario_logado:
         from favoritos_service import eh_favorito, alternar_favorito
 
-        col_estrela, col_hora, col_jogo, col_data, col_score = (
-            st.columns([0.35, 0.55, 2.1, 0.75, 0.6])
+        col_estrela, col_hora, col_jogo, col_data, col_score, col_btn = (
+            st.columns([0.35, 0.55, 1.85, 0.7, 0.55, 0.85])
         )
 
         with col_estrela:
@@ -39,8 +42,8 @@ def _renderizar_linha_jogo(analise, indice, usuario_logado, usuario_id):
                 alternar_favorito(usuario_id, analise["mandante"])
                 st.rerun()
     else:
-        col_estrela, col_hora, col_jogo, col_data, col_score = (
-            st.columns([0.35, 0.55, 2.1, 0.75, 0.6])
+        col_estrela, col_hora, col_jogo, col_data, col_score, col_btn = (
+            st.columns([0.35, 0.55, 1.85, 0.7, 0.55, 0.85])
         )
 
         with col_estrela:
@@ -87,6 +90,16 @@ def _renderizar_linha_jogo(analise, indice, usuario_logado, usuario_id):
             unsafe_allow_html=True
         )
 
+    with col_btn:
+        if st.button(
+            "Analisar",
+            key=f"analisar_vitrine_{indice}",
+            use_container_width=True,
+        ):
+            callback_selecao(
+                analise["mandante"], analise["visitante"]
+            )
+
     st.markdown(
         '<div style="border-bottom:1px solid var(--border);'
         'margin:4px 0 8px 0;"></div>',
@@ -94,7 +107,7 @@ def _renderizar_linha_jogo(analise, indice, usuario_logado, usuario_id):
     )
 
 
-def renderizar_vitrine_publica():
+def renderizar_vitrine_publica(callback_selecao):
     try:
         resultado = _construir_vitrine_com_cache(quantidade=8)
     except Exception as erro:
@@ -139,7 +152,8 @@ def renderizar_vitrine_publica():
 
             for indice, analise in enumerate(analises):
                 _renderizar_linha_jogo(
-                    analise, indice, usuario_logado, usuario_id
+                    analise, indice, usuario_logado, usuario_id,
+                    callback_selecao,
                 )
 
             st.caption(
@@ -183,5 +197,6 @@ def renderizar_vitrine_publica():
                     for indice, analise in enumerate(analises_filtradas):
                         _renderizar_linha_jogo(
                             analise, f"mt_{indice}",
-                            usuario_logado, usuario_id
+                            usuario_logado, usuario_id,
+                            callback_selecao,
                         )
