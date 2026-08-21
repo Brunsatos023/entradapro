@@ -1,6 +1,7 @@
 import streamlit as st
 
 from access_control import usuario_eh_pro, renderizar_bloqueio_pro
+from ui.escudos_times import html_escudo
 
 
 def _limitar_percentual(valor):
@@ -202,93 +203,121 @@ def renderizar_overview(
         "### 🎯 Decisão EntradaPro"
     )
 
-    if usuario_eh_pro():
-        if not recomendacao_validada:
-            with st.container(
-                border=True
-            ):
-                st.error(
-                    "🚫 NÃO APOSTAR"
-                )
+    eh_pro_decisao = usuario_eh_pro()
+    classe_borrado_decisao = (
+        "" if eh_pro_decisao else "conteudo-borrado"
+    )
 
-                st.write(
-                    "Nenhum mercado atingiu os critérios "
-                    "estratégicos validados da V1."
-                )
+    if not recomendacao_validada:
+        with st.container(
+            border=True
+        ):
+            st.markdown(
+                f'<div class="{classe_borrado_decisao}">',
+                unsafe_allow_html=True
+            )
+            st.error(
+                "🚫 NÃO APOSTAR"
+            )
 
-        else:
-            if melhor_mercado == "Mais de 1,5 gols":
-                probabilidade_mercado = over15
-
-                status_mercado = status_over15
-
-            else:
-                probabilidade_mercado = btts
-
-                status_mercado = status_btts
-
-            with st.container(
-                border=True
-            ):
-                col1, col2 = st.columns(
-                    [2, 1]
-                )
-
-                with col1:
-                    st.caption(
-                        "MELHOR OPORTUNIDADE"
-                    )
-
-                    st.markdown(
-                        f"## {melhor_mercado}"
-                    )
-
-                    st.markdown(
-                        f"### {probabilidade_mercado:.2f}%"
-                    )
-
-                    _renderizar_barra(
-                        probabilidade_mercado
-                    )
-
-                    st.success(
-                        status_mercado
-                    )
-
-                with col2:
-                    st.metric(
-                        "Odd mercado",
-                        f"{resultado_value['odd_casa']:.2f}"
-                    )
-
-                    st.metric(
-                        "Odd justa",
-                        f"{resultado_value['odd_justa']:.2f}"
-                    )
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                st.metric(
-                    "Edge",
-                    f"{resultado_value['edge']:+.2f}%"
-                )
-
-            with col2:
-                st.metric(
-                    "Valor esperado",
-                    f"{resultado_value['valor_esperado']:+.2f}%"
-                )
+            st.write(
+                "Nenhum mercado atingiu os critérios "
+                "estratégicos validados da V1."
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
 
     else:
-        st.warning(
-            "🔒 Decisão, odd justa, edge e valor esperado "
-            "são exclusivos do plano PRO."
-        )
+        if melhor_mercado == "Mais de 1,5 gols":
+            probabilidade_mercado = over15
 
-        st.caption(
-            "No plano FREE, as probabilidades da partida "
-            "e os mercados analisados continuam disponíveis."
+            status_mercado = status_over15
+
+        else:
+            probabilidade_mercado = btts
+
+            status_mercado = status_btts
+
+        with st.container(
+            border=True
+        ):
+            col1, col2 = st.columns(
+                [2, 1]
+            )
+
+            with col1:
+                st.markdown(
+                    f'<div class="{classe_borrado_decisao}">',
+                    unsafe_allow_html=True
+                )
+                st.caption(
+                    "MELHOR OPORTUNIDADE"
+                )
+
+                st.markdown(
+                    f"## {melhor_mercado}"
+                )
+
+                st.markdown(
+                    f"### {probabilidade_mercado:.2f}%"
+                )
+
+                _renderizar_barra(
+                    probabilidade_mercado
+                )
+
+                st.success(
+                    status_mercado
+                )
+                st.markdown('</div>', unsafe_allow_html=True)
+
+            with col2:
+                st.markdown(
+                    f'<div class="{classe_borrado_decisao}">',
+                    unsafe_allow_html=True
+                )
+                st.metric(
+                    "Odd mercado",
+                    f"{resultado_value['odd_casa']:.2f}"
+                )
+
+                st.metric(
+                    "Odd justa",
+                    f"{resultado_value['odd_justa']:.2f}"
+                )
+                st.markdown('</div>', unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown(
+                f'<div class="{classe_borrado_decisao}">',
+                unsafe_allow_html=True
+            )
+            st.metric(
+                "Edge",
+                f"{resultado_value['edge']:+.2f}%"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        with col2:
+            st.markdown(
+                f'<div class="{classe_borrado_decisao}">',
+                unsafe_allow_html=True
+            )
+            st.metric(
+                "Valor esperado",
+                f"{resultado_value['valor_esperado']:+.2f}%"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    if not eh_pro_decisao:
+        st.markdown(
+            '<div style="text-align:center;margin-top:10px;">'
+            '<span style="background:rgba(217,163,83,.12);'
+            'border:1px solid rgba(217,163,83,.3);border-radius:8px;'
+            'padding:8px 16px;color:var(--green);font-size:13px;">'
+            '🔒 Desbloquear Decisão EntradaPro com PRO</span></div>',
+            unsafe_allow_html=True
         )
 
     # =====================================================
@@ -299,12 +328,23 @@ def renderizar_overview(
         "### Probabilidades da partida"
     )
 
+    maior_prob = max(prob_casa, prob_empate, prob_fora)
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric(
-            nome_mandante,
-            f"{prob_casa:.2f}%"
+        destaque = " destaque-favorito" if prob_casa == maior_prob else ""
+        st.markdown(
+            f'<div class="card-probabilidade{destaque}">'
+            f'<div style="display:flex;align-items:center;gap:6px;'
+            f'margin-bottom:6px;">'
+            f'{html_escudo(nome_mandante)}'
+            f'<span style="font-size:12px;color:var(--text-muted);">'
+            f'{nome_mandante}</span></div>'
+            f'<div style="font-size:24px;font-weight:700;">'
+            f'{prob_casa:.2f}%</div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
 
         _renderizar_barra(
@@ -312,9 +352,15 @@ def renderizar_overview(
         )
 
     with col2:
-        st.metric(
-            "Empate",
-            f"{prob_empate:.2f}%"
+        destaque = " destaque-favorito" if prob_empate == maior_prob else ""
+        st.markdown(
+            f'<div class="card-probabilidade{destaque}">'
+            f'<div style="font-size:12px;color:var(--text-muted);'
+            f'margin-bottom:6px;">Empate</div>'
+            f'<div style="font-size:24px;font-weight:700;">'
+            f'{prob_empate:.2f}%</div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
 
         _renderizar_barra(
@@ -322,9 +368,18 @@ def renderizar_overview(
         )
 
     with col3:
-        st.metric(
-            nome_visitante,
-            f"{prob_fora:.2f}%"
+        destaque = " destaque-favorito" if prob_fora == maior_prob else ""
+        st.markdown(
+            f'<div class="card-probabilidade{destaque}">'
+            f'<div style="display:flex;align-items:center;gap:6px;'
+            f'margin-bottom:6px;">'
+            f'{html_escudo(nome_visitante)}'
+            f'<span style="font-size:12px;color:var(--text-muted);">'
+            f'{nome_visitante}</span></div>'
+            f'<div style="font-size:24px;font-weight:700;">'
+            f'{prob_fora:.2f}%</div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
 
         _renderizar_barra(

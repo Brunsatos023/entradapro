@@ -139,6 +139,19 @@ def aplicar_estilos():
             pointer-events: none;
         }
 
+        /* Cards de probabilidade (casa/empate/fora) com destaque
+           visual pro resultado mais provavel */
+        .card-probabilidade {
+            padding: 4px 0;
+        }
+
+        .destaque-favorito {
+            background: rgba(217, 163, 83, 0.08);
+            border: 1px solid rgba(217, 163, 83, 0.3);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
         /* Campos de login/cadastro arredondados (estilo "pill"),
            igual referencia visual aprovada */
         div[data-testid="stForm"] input[type="text"],
@@ -1699,6 +1712,17 @@ def aplicar_estilos():
         .stApp [data-testid="stProgress"] > div > div {
             border-radius:
                 999px;
+        }
+
+
+        /* A barra de progresso nativa do Streamlit vem azul por
+           padrao - forcamos a cor dourada do EntradaPro aqui.
+           Cobre as duas variacoes de estrutura DOM que o
+           Streamlit usa entre versoes. */
+        .stApp [data-testid="stProgress"] div[role="progressbar"] > div,
+        .stApp [data-testid="stProgress"] > div > div > div {
+            background-color: var(--green) !important;
+            background-image: none !important;
         }
 
 
