@@ -760,10 +760,13 @@ def main():
         st.session_state.partida_analisada = True
         st.rerun()
 
-    try:
-        renderizar_vitrine_publica(_selecionar_jogo_da_vitrine)
-    except Exception as erro:
-        logger.exception("Erro em renderizar_vitrine_publica: %s", erro)
+    if not st.session_state.partida_analisada:
+        try:
+            renderizar_vitrine_publica(_selecionar_jogo_da_vitrine)
+        except Exception as erro:
+            logger.exception(
+                "Erro em renderizar_vitrine_publica: %s", erro
+            )
 
     try:
         partidas = carregar_dados()
@@ -810,62 +813,7 @@ def main():
 
     renderizar_configuracoes_laterais()
 
-    if usuario_esta_autenticado():
-        try:
-            renderizar_alertas_risco()
-        except Exception as erro:
-            logger.exception(
-                "Erro em renderizar_alertas_risco: %s", erro
-            )
-
-        try:
-            renderizar_melhores_entradas()
-        except Exception as erro:
-            logger.exception(
-                "Erro em renderizar_melhores_entradas: %s", erro
-            )
-
-        def _selecionar_jogo_da_lista(mandante, visitante):
-            st.session_state.competicao_ativa = COMPETICAO_PADRAO
-            st.session_state.mandante_ativo = mandante
-            st.session_state.visitante_ativo = visitante
-            st.session_state.partida_analisada = True
-            st.rerun()
-
-        try:
-            renderizar_lista_principal(_selecionar_jogo_da_lista)
-        except Exception as erro:
-            # Mesmo com o registro no log, o site continua
-            # funcionando normalmente com a seleção manual abaixo
-            # se a lista principal der qualquer problema.
-            logger.exception(
-                "Erro em renderizar_lista_principal: %s", erro
-            )
-
-        resultado_seletor = renderizar_seletor_partida(
-            competicoes=[
-                COMPETICAO_PADRAO
-            ],
-            times=nomes_times,
-            competicao_padrao=(
-                st.session_state.competicao_ativa
-                or COMPETICAO_PADRAO
-            ),
-            mandante_padrao=(
-                st.session_state.mandante_ativo
-                or mandante_padrao
-            ),
-            visitante_padrao=(
-                st.session_state.visitante_ativo
-                or visitante_padrao
-            )
-        )
-
-        atualizar_partida_ativa(
-            resultado_seletor
-        )
-
-    else:
+    if not usuario_esta_autenticado():
         st.markdown(
             "### 🔎 Análise de partida"
         )
@@ -924,9 +872,77 @@ def main():
         return
 
     if not st.session_state.partida_analisada:
-        renderizar_estado_inicial()
-        renderizar_rodape()
-        return
+        try:
+            renderizar_alertas_risco()
+        except Exception as erro:
+            logger.exception(
+                "Erro em renderizar_alertas_risco: %s", erro
+            )
+
+        try:
+            renderizar_melhores_entradas()
+        except Exception as erro:
+            logger.exception(
+                "Erro em renderizar_melhores_entradas: %s", erro
+            )
+
+        def _selecionar_jogo_da_lista(mandante, visitante):
+            st.session_state.competicao_ativa = COMPETICAO_PADRAO
+            st.session_state.mandante_ativo = mandante
+            st.session_state.visitante_ativo = visitante
+            st.session_state.partida_analisada = True
+            st.rerun()
+
+        try:
+            renderizar_lista_principal(_selecionar_jogo_da_lista)
+        except Exception as erro:
+            # Mesmo com o registro no log, o site continua
+            # funcionando normalmente com a seleção manual abaixo
+            # se a lista principal der qualquer problema.
+            logger.exception(
+                "Erro em renderizar_lista_principal: %s", erro
+            )
+
+        resultado_seletor = renderizar_seletor_partida(
+            competicoes=[
+                COMPETICAO_PADRAO
+            ],
+            times=nomes_times,
+            competicao_padrao=(
+                st.session_state.competicao_ativa
+                or COMPETICAO_PADRAO
+            ),
+            mandante_padrao=(
+                st.session_state.mandante_ativo
+                or mandante_padrao
+            ),
+            visitante_padrao=(
+                st.session_state.visitante_ativo
+                or visitante_padrao
+            )
+        )
+
+        atualizar_partida_ativa(
+            resultado_seletor
+        )
+
+        if not st.session_state.partida_analisada:
+            renderizar_estado_inicial()
+            renderizar_rodape()
+            return
+
+    # A partir daqui: usuário autenticado E uma partida específica
+    # está sendo analisada - vira uma "página" própria, focada só
+    # nesse confronto (sem a lista de Destaques nem o seletor
+    # visíveis juntos, como pediu o Bruno).
+    if st.button(
+        "← Voltar para Destaques",
+        key="voltar_para_destaques"
+    ):
+        st.session_state.partida_analisada = False
+        st.session_state.mandante_ativo = None
+        st.session_state.visitante_ativo = None
+        st.rerun()
 
     nome_mandante = (
         st.session_state.mandante_ativo
