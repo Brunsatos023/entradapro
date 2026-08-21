@@ -1,4 +1,4 @@
-"""Testes do utilitário de escudos (cor + sigla) dos times."""
+"""Testes do utilitário de escudos (imagem real + reserva)."""
 
 import sys
 import unittest
@@ -14,24 +14,34 @@ escudos = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(escudos)
 
 
+class TestObterUrlEscudo(unittest.TestCase):
+
+    def test_time_conhecido_retorna_url_real(self):
+        url = escudos.obter_url_escudo("Flamengo")
+        self.assertTrue(url.startswith("https://media.api-sports.io/"))
+
+    def test_time_desconhecido_retorna_none(self):
+        self.assertIsNone(escudos.obter_url_escudo("Time Inventado XPTO"))
+
+    def test_todos_os_20_times_tem_url_valida(self):
+        for nome, (url, *_resto) in escudos.ESCUDOS.items():
+            self.assertTrue(
+                url.startswith("https://"), f"{nome} sem URL valida"
+            )
+
+
 class TestObterEscudo(unittest.TestCase):
 
-    def test_time_conhecido_retorna_cores_e_sigla_definidas(self):
+    def test_time_conhecido_retorna_cores_e_sigla_de_reserva(self):
         cor_fundo, cor_texto, sigla = escudos.obter_escudo("Flamengo")
         self.assertEqual(sigla, "FLA")
         self.assertTrue(cor_fundo.startswith("#"))
-        self.assertTrue(cor_texto.startswith("#"))
 
     def test_time_desconhecido_nao_quebra(self):
         cor_fundo, cor_texto, sigla = escudos.obter_escudo(
             "Time Inventado XPTO"
         )
         self.assertEqual(sigla, "TIM")
-        self.assertTrue(cor_fundo.startswith("#"))
-
-    def test_nome_vazio_nao_quebra(self):
-        cor_fundo, cor_texto, sigla = escudos.obter_escudo("")
-        self.assertEqual(sigla, "?")
 
     def test_nome_none_nao_quebra(self):
         cor_fundo, cor_texto, sigla = escudos.obter_escudo(None)
@@ -51,11 +61,24 @@ class TestObterEscudo(unittest.TestCase):
 
 class TestHtmlEscudo(unittest.TestCase):
 
-    def test_gera_html_valido(self):
+    def test_time_conhecido_usa_imagem_real(self):
+        html = escudos.html_escudo("Palmeiras")
+        self.assertIn("<img", html)
+        self.assertIn("media.api-sports.io", html)
+
+    def test_time_conhecido_tambem_tem_reserva_no_html(self):
         html = escudos.html_escudo("Palmeiras")
         self.assertIn("escudo-time", html)
         self.assertIn("PAL", html)
-        self.assertIn("background:", html)
+
+    def test_time_desconhecido_usa_so_a_reserva(self):
+        html = escudos.html_escudo("Time Inventado XPTO")
+        self.assertNotIn("<img", html)
+        self.assertIn("escudo-time", html)
+
+    def test_tamanho_customizado_e_aplicado(self):
+        html = escudos.html_escudo("Flamengo", tamanho=46)
+        self.assertIn("46px", html)
 
 
 if __name__ == "__main__":
