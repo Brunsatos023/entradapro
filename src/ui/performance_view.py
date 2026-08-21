@@ -348,7 +348,7 @@ def criar_grafico_roi():
     barras = eixo.bar(
         temporadas,
         valores,
-        color="#d9a353",
+        color="#14e89e",
         width=0.55
     )
 

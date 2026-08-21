@@ -197,7 +197,7 @@ def criar_radar_chart(
         angulos,
         notas_mandante_fechadas,
         linewidth=2.4,
-        color="#d9a353",
+        color="#14e89e",
         label=nome_mandante
     )
 
@@ -205,7 +205,7 @@ def criar_radar_chart(
         angulos,
         notas_mandante_fechadas,
         alpha=0.16,
-        color="#d9a353"
+        color="#14e89e"
     )
 
     eixo.plot(
@@ -231,7 +231,7 @@ def criar_radar_chart(
             angulo,
             nota,
             s=30,
-            color="#d9a353",
+            color="#14e89e",
             zorder=5
         )
 

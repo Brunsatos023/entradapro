@@ -855,7 +855,7 @@ def _renderizar_cabecalho_auth():
                 color:#ffffff;
                 line-height:1;
             ">
-                Entrada<span style="color:#d9a353;">Pro</span>
+                Entrada<span style="color:#14e89e;">Pro</span>
             </div>
 
             <div style="
@@ -1170,16 +1170,6 @@ def _dialogo_autenticacao():
         _renderizar_redefinir_senha()
     else:
         _renderizar_login()
-
-    st.divider()
-
-    if st.button(
-        "Continuar visualizando",
-        use_container_width=True,
-        key="fechar_modal_auth"
-    ):
-        fechar_autenticacao()
-        st.rerun()
 
 
 def renderizar_dialogo_autenticacao():

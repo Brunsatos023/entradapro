@@ -66,7 +66,7 @@ def aplicar_estilos():
             font-weight: 700;
             letter-spacing: -0.02em;
             color: var(--green);
-            box-shadow: 0 0 0 3px rgba(217, 163, 83, 0.15);
+            box-shadow: 0 0 0 3px rgba(20, 232, 158, 0.15);
             flex-shrink: 0;
         }
 
@@ -146,8 +146,8 @@ def aplicar_estilos():
         }
 
         .destaque-favorito {
-            background: rgba(217, 163, 83, 0.08);
-            border: 1px solid rgba(217, 163, 83, 0.3);
+            background: rgba(20, 232, 158, 0.08);
+            border: 1px solid rgba(20, 232, 158, 0.3);
             border-radius: 10px;
             padding: 10px;
         }
@@ -200,9 +200,9 @@ def aplicar_estilos():
             --text-secondary: #bcc8b6;
             --text-muted: #909f88;
 
-            --green: #d9a353;
-            --green-light: #e8b972;
-            --green-dark: #9e6b1f;
+            --green: #14e89e;
+            --green-light: #4ff0b8;
+            --green-dark: #0ba876;
 
             --red: #ef7583;
             --yellow: #e7c84b;
@@ -307,7 +307,7 @@ def aplicar_estilos():
             background:
                 radial-gradient(
                     circle at 90% 20%,
-                    rgba(217, 163, 83, 0.10),
+                    rgba(20, 232, 158, 0.10),
                     transparent 30%
                 ),
                 linear-gradient(
@@ -374,9 +374,9 @@ def aplicar_estilos():
 
             color: var(--green);
 
-            background: rgba(217, 163, 83, 0.12);
+            background: rgba(20, 232, 158, 0.12);
 
-            border: 1px solid rgba(217, 163, 83, 0.30);
+            border: 1px solid rgba(20, 232, 158, 0.30);
 
             border-radius: 999px;
         }
@@ -460,16 +460,16 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     135deg,
-                    rgba(217, 163, 83, 0.15),
+                    rgba(20, 232, 158, 0.15),
                     rgba(126, 92, 40, 0.09)
                 ) !important;
 
             border:
-                1px solid rgba(217, 163, 83, 0.30) !important;
+                1px solid rgba(20, 232, 158, 0.30) !important;
 
             box-shadow:
                 inset 0 0 0 1px
-                rgba(217, 163, 83, 0.035);
+                rgba(20, 232, 158, 0.035);
         }
 
 
@@ -542,12 +542,12 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     135deg,
-                    #d59c46,
-                    #ba822f
+                    #1de9a0,
+                    #0fb87f
                 );
 
             border:
-                1px solid rgba(232, 179, 100, 0.40);
+                1px solid rgba(20, 232, 158, 0.40);
 
             border-radius:
                 10px;
@@ -557,7 +557,7 @@ def aplicar_estilos():
 
             box-shadow:
                 0 8px 20px
-                rgba(181, 123, 35, 0.18);
+                rgba(15, 184, 127, 0.18);
 
             transition:
                 all 0.18s ease;
@@ -572,19 +572,19 @@ def aplicar_estilos():
             background:
                 linear-gradient(
                     135deg,
-                    #e5b163,
-                    #c98f39
+                    #4ff0c0,
+                    #14cf94
                 );
 
             border:
-                1px solid rgba(239, 191, 118, 0.60);
+                1px solid rgba(79, 240, 192, 0.60);
 
             transform:
                 translateY(-1px);
 
             box-shadow:
                 0 10px 24px
-                rgba(181, 123, 35, 0.25);
+                rgba(11, 168, 118, 0.25);
         }
 
 
@@ -909,7 +909,7 @@ def aplicar_estilos():
             background:
                 radial-gradient(
                     circle,
-                    rgba(217, 163, 83, 0.09),
+                    rgba(20, 232, 158, 0.09),
                     transparent 68%
                 );
 
@@ -923,7 +923,7 @@ def aplicar_estilos():
                 translateY(-2px);
 
             border-color:
-                rgba(217, 163, 83, 0.40);
+                rgba(20, 232, 158, 0.40);
 
             box-shadow:
                 0 14px 34px
@@ -940,7 +940,7 @@ def aplicar_estilos():
                 );
 
             border-color:
-                rgba(217, 163, 83, 0.42);
+                rgba(20, 232, 158, 0.42);
         }
 
 
@@ -1118,11 +1118,11 @@ def aplicar_estilos():
                 6px 11px;
 
             background:
-                rgba(217, 163, 83, 0.12);
+                rgba(20, 232, 158, 0.12);
 
             border:
                 1px solid
-                rgba(217, 163, 83, 0.30);
+                rgba(20, 232, 158, 0.30);
 
             color:
                 #e4b672;
@@ -1251,7 +1251,7 @@ def aplicar_estilos():
 
             box-shadow:
                 0 0 12px
-                rgba(217, 163, 83, 0.22);
+                rgba(20, 232, 158, 0.22);
         }
 
 
@@ -1475,7 +1475,7 @@ def aplicar_estilos():
 
         .premium-favorite-card {
             border-color:
-                rgba(217, 163, 83, 0.48);
+                rgba(20, 232, 158, 0.48);
         }
 
 

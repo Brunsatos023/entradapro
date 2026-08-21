@@ -71,7 +71,7 @@ def renderizar_estado_inicial():
         '</div>'
         '<div class="match-name">'
         'Selecione os times e clique em '
-        '<span style="color:#d9a353;">'
+        '<span style="color:#14e89e;">'
         '“Analisar partida”'
         '</span>'
         '</div>'
