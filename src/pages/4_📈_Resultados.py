@@ -25,12 +25,10 @@ from prediction_history_service import (
 )
 from db import conectar_banco
 
-
-st.set_page_config(
-    page_title="Resultados EntradaPro",
-    page_icon="📊",
-    layout="wide",
-)
+# st.set_page_config() nao e mais chamado aqui - com st.navigation(),
+# so o ponto de entrada (dashboard.py) pode chamar isso, uma unica
+# vez por sessao. O titulo/icone desta pagina agora vem do
+# st.Page(...) definido em dashboard.py.
 
 inicializar_banco()
 inicializar_estado_autenticacao()

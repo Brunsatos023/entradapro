@@ -745,7 +745,13 @@ def renderizar_metodologia():
     )
 
 
-def main():
+def _preparar_sessao():
+    """
+    Roda uma vez por carregamento da pagina, ANTES de decidir quais
+    paginas mostrar na navegacao (ex: Administracao so aparece pra
+    quem tem permissao) - precisa saber se o usuario esta logado
+    antes de montar a lista de paginas.
+    """
     aplicar_estilos()
     inicializar_estado()
     inicializar_banco()
@@ -770,6 +776,8 @@ def main():
                 "Erro ao sincronizar login do Google: %s", erro
             )
 
+
+def main():
     if not usuario_esta_autenticado():
         renderizar_acoes_visitante_topo()
 
@@ -1237,4 +1245,51 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    _preparar_sessao()
+
+    usuario_com_permissao_admin = False
+
+    if usuario_esta_autenticado():
+        try:
+            from admin_users import usuario_tem_permissao_admin
+
+            usuario_com_permissao_admin = usuario_tem_permissao_admin(
+                st.session_state.usuario["id"]
+            )
+        except Exception as erro:
+            logger.exception(
+                "Erro ao verificar permissao de admin: %s", erro
+            )
+
+    paginas = [
+        st.Page(
+            main, title="Dashboard", icon="⚽", default=True
+        ),
+        st.Page(
+            "pages/1_📊_Performance.py", title="Performance",
+            icon="📊",
+        ),
+        st.Page(
+            "pages/4_📈_Resultados.py", title="Resultados",
+            icon="📈",
+        ),
+        st.Page(
+            "pages/2_⭐_Assinatura_PRO.py", title="Assinatura PRO",
+            icon="⭐",
+        ),
+    ]
+
+    # "Administracao" so aparece na navegacao para quem realmente
+    # tem a permissao de admin no banco - antes aparecia pra todo
+    # mundo (so nao conseguia entrar sem a senha certa).
+    if usuario_com_permissao_admin:
+        paginas.append(
+            st.Page(
+                "pages/3_🔐_Administracao.py",
+                title="Administração",
+                icon="🔐",
+            )
+        )
+
+    pagina_ativa = st.navigation(paginas)
+    pagina_ativa.run()

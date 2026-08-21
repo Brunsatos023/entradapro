@@ -5,12 +5,10 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 import streamlit as st
 
-
-st.set_page_config(
-    page_title="Performance Analytics | FootballAI",
-    page_icon="📊",
-    layout="wide",
-)
+# st.set_page_config() nao e mais chamado aqui - com st.navigation(),
+# so o ponto de entrada (dashboard.py) pode chamar isso, uma unica
+# vez por sessao. O titulo/icone desta pagina agora vem do
+# st.Page(...) definido em dashboard.py.
 
 
 CAMINHOS_RELATORIO = (
