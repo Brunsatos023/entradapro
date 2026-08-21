@@ -14,6 +14,9 @@ import streamlit as st
 from engines.opportunity_scanner import escanear_melhores_oportunidades
 from access_control import usuario_eh_pro, renderizar_bloqueio_pro
 
+import logging
+logger = logging.getLogger("entradapro.dashboard")
+
 
 @st.cache_data(ttl=600, show_spinner=False)
 def _escanear_com_cache(dias_a_frente, limite):
@@ -27,7 +30,10 @@ def renderizar_melhores_entradas():
         resultado = _escanear_com_cache(
             dias_a_frente=3, limite=5
         )
-    except Exception:
+    except Exception as erro:
+        logger.exception(
+            "Erro ao escanear melhores entradas: %s", erro
+        )
         return
 
     if not resultado.get("sucesso"):

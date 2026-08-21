@@ -12,6 +12,9 @@ import streamlit as st
 from access_control import usuario_eh_pro, renderizar_bloqueio_pro
 from engines.multi_league_service import buscar_vitrine_campeonatos
 
+import logging
+logger = logging.getLogger("entradapro.dashboard")
+
 
 @st.cache_data(ttl=900, show_spinner=False)
 def _buscar_vitrine_com_cache(dias_a_frente):
@@ -33,7 +36,10 @@ def renderizar_vitrine_campeonatos():
 
     try:
         resultado = _buscar_vitrine_com_cache(dias_a_frente=3)
-    except Exception:
+    except Exception as erro:
+        logger.exception(
+            "Erro ao buscar vitrine de campeonatos: %s", erro
+        )
         return
 
     if not resultado.get("sucesso"):

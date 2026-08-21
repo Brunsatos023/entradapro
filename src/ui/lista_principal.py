@@ -13,6 +13,9 @@ import streamlit as st
 
 from engines.match_list_service import construir_lista_jogos
 
+import logging
+logger = logging.getLogger("entradapro.dashboard")
+
 
 DIAS_SEMANA = [
     "Segunda", "Terça", "Quarta", "Quinta",
@@ -72,7 +75,10 @@ def renderizar_lista_principal(callback_selecao):
     """
     try:
         resultado = _construir_lista_com_cache(dias_a_frente=7)
-    except Exception:
+    except Exception as erro:
+        logger.exception(
+            "Erro ao construir lista principal de jogos: %s", erro
+        )
         return
 
     if not resultado.get("sucesso"):

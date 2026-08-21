@@ -11,6 +11,21 @@ from google_auth_service import obter_ou_criar_usuario_google
 
 configurar_secrets_google()
 
+# ---------------------------------------------------------
+# Logging: qualquer erro nas seções novas (lista principal,
+# melhores entradas, vitrine, etc.) fica registrado aqui em vez
+# de falhar silenciosamente - assim dá para ver o problema real
+# na aba "Logs" do Render, sem precisar de Shell.
+# ---------------------------------------------------------
+import logging  # noqa: E402
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+
+logger = logging.getLogger("entradapro.dashboard")
+
 from auth import (
     inicializar_banco,
     inicializar_estado_autenticacao,
@@ -741,15 +756,20 @@ def main():
             st.session_state.usuario_autenticado = True
             st.session_state.usuario = conta_google
             st.rerun()
-        except Exception:
-            pass
+        except Exception as erro:
+            logger.exception(
+                "Erro ao sincronizar login do Google: %s", erro
+            )
 
     if not usuario_esta_autenticado():
         renderizar_acoes_visitante_topo()
 
     try:
         total_partidas_base = len(carregar_dados())
-    except Exception:
+    except Exception as erro:
+        logger.exception(
+            "Erro ao carregar total de partidas da base: %s", erro
+        )
         total_partidas_base = None
 
     renderizar_cabecalho(total_partidas_base)
@@ -824,18 +844,24 @@ def main():
     if usuario_esta_autenticado():
         try:
             renderizar_alertas_risco()
-        except Exception:
-            pass
+        except Exception as erro:
+            logger.exception(
+                "Erro em renderizar_alertas_risco: %s", erro
+            )
 
         try:
             renderizar_melhores_entradas()
-        except Exception:
-            pass
+        except Exception as erro:
+            logger.exception(
+                "Erro em renderizar_melhores_entradas: %s", erro
+            )
 
         try:
             renderizar_vitrine_campeonatos()
-        except Exception:
-            pass
+        except Exception as erro:
+            logger.exception(
+                "Erro em renderizar_vitrine_campeonatos: %s", erro
+            )
 
         def _selecionar_jogo_da_lista(mandante, visitante):
             st.session_state.competicao_ativa = COMPETICAO_PADRAO
@@ -846,12 +872,13 @@ def main():
 
         try:
             renderizar_lista_principal(_selecionar_jogo_da_lista)
-        except Exception:
-            # Falha silenciosa e segura: se a lista principal der
-            # qualquer problema (sem chave de API, API fora do ar,
-            # etc.), o site continua funcionando normalmente com a
-            # seleção manual abaixo.
-            pass
+        except Exception as erro:
+            # Mesmo com o registro no log, o site continua
+            # funcionando normalmente com a seleção manual abaixo
+            # se a lista principal der qualquer problema.
+            logger.exception(
+                "Erro em renderizar_lista_principal: %s", erro
+            )
 
         resultado_seletor = renderizar_seletor_partida(
             competicoes=[
@@ -1083,8 +1110,10 @@ def main():
                 id_mandante=id_mandante,
                 id_visitante=id_visitante,
             )
-        except Exception:
-            pass
+        except Exception as erro:
+            logger.exception(
+                "Erro em renderizar_secao_corners: %s", erro
+            )
 
     with aba_analise:
 
